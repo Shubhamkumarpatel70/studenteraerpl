@@ -5,10 +5,10 @@ const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
 const bcrypt = require('bcryptjs'); // Password hashing library
-const uuid = require('uuid'); // For generating unique IDs
+const { v4: uuidv4 } = require('uuid'); // For generating unique IDs
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Ensure data directory exists
 const dataDir = path.join(__dirname, 'data');
@@ -20,6 +20,8 @@ if (!fs.existsSync(dataDir)) {
 // Path to the Excel files
 const EXCEL_FILE = path.join(dataDir, 'users.xlsx');
 const MEETING_FILE = path.join(dataDir, 'meetings.xlsx');
+const STUDENT_ID_FILE = path.join(dataDir, 'student_ids.xlsx');
+const CERTIFICATE_FILE = path.join(dataDir, 'certificates.xlsx');
 
 // Middleware
 app.use(bodyParser.json());
@@ -39,6 +41,8 @@ function ensureFileExists(filePath, headers) {
 
 ensureFileExists(EXCEL_FILE, ["Username", "Email", "Password", "Role"]);
 ensureFileExists(MEETING_FILE, ["Id", "Topic", "Date", "Time", "Host", "Link"]);
+ensureFileExists(STUDENT_ID_FILE, ["StudentId", "Name", "Email", "CreatedAt"]);
+ensureFileExists(CERTIFICATE_FILE, ["StudentId", "CertificateNumber", "IssuedAt"]);
 
 // Helper functions for reading/writing Excel files
 function readExcelFile(filePath) {
@@ -232,7 +236,7 @@ app.post('/schedule-meeting', (req, res) => {
         return res.status(400).json({ message: "All fields are required." });
     }
 
-    const id = uuid.v4();
+    const id = uuidv4();
     const data = readExcelFile(MEETING_FILE);
     data.push([id, topic, date, time, host, link]);
     writeExcelFile(MEETING_FILE, data);
@@ -274,6 +278,102 @@ app.delete('/delete-meeting', (req, res) => {
 
     writeExcelFile(MEETING_FILE, [header, ...updatedData]);
     res.status(200).json({ message: "Meeting deleted successfully." });
+});
+
+// Get all student IDs
+app.get('/generatedstudentidofregisteredstudentatstudenterastudentid', (req, res) => {
+    try {
+        const data = readExcelFile(STUDENT_ID_FILE);
+        const students = data.slice(1).map(row => row[0]); // Extract just the student IDs
+        res.status(200).json({ students });
+    } catch (error) {
+        console.error('Error fetching student IDs:', error);
+        res.status(500).json({ message: "Error fetching student IDs" });
+    }
+});
+
+// Generate a new student ID
+app.post('/generatestudentid', (req, res) => {
+    try {
+        const { name, email } = req.body;
+        
+        if (!name || !email) {
+            return res.status(400).json({ message: "Name and email are required." });
+        }
+        
+        // Generate a unique student ID (e.g., SE12345)
+        const studentId = 'SE' + Math.floor(10000 + Math.random() * 90000);
+        const createdAt = new Date().toISOString();
+        
+        const data = readExcelFile(STUDENT_ID_FILE);
+        data.push([studentId, name, email, createdAt]);
+        writeExcelFile(STUDENT_ID_FILE, data);
+        
+        res.status(201).json({ 
+            message: "Student ID generated successfully.",
+            studentId
+        });
+    } catch (error) {
+        console.error('Error generating student ID:', error);
+        res.status(500).json({ message: "Error generating student ID" });
+    }
+});
+
+// Get all certificates
+app.get('/progressreportuserofinternshipscompletedinternship', (req, res) => {
+    try {
+        const data = readExcelFile(CERTIFICATE_FILE);
+        const certificates = data.slice(1).map(row => ({
+            studentId: row[0],
+            certificateNumber: row[1],
+            issuedAt: row[2]
+        }));
+        res.status(200).json(certificates);
+    } catch (error) {
+        console.error('Error fetching certificates:', error);
+        res.status(500).json({ message: "Error fetching certificates" });
+    }
+});
+
+// Generate a certificate for a student
+app.post('/progressreportuserofinternshipscompletedinternship', (req, res) => {
+    try {
+        const { studentId, certificateNumber } = req.body;
+        
+        if (!studentId || !certificateNumber) {
+            return res.status(400).json({ message: "Student ID and certificate number are required." });
+        }
+        
+        // Check if the student ID exists
+        const studentData = readExcelFile(STUDENT_ID_FILE);
+        const studentExists = studentData.slice(1).some(row => row[0] === studentId);
+        
+        if (!studentExists) {
+            return res.status(404).json({ message: "Student ID not found." });
+        }
+        
+        // Check if a certificate already exists for this student
+        const certData = readExcelFile(CERTIFICATE_FILE);
+        const certExists = certData.slice(1).some(row => row[0] === studentId);
+        
+        if (certExists) {
+            return res.status(409).json({ message: "Certificate already exists for this student." });
+        }
+        
+        const issuedAt = new Date().toISOString();
+        certData.push([studentId, certificateNumber, issuedAt]);
+        writeExcelFile(CERTIFICATE_FILE, certData);
+        
+        res.status(201).json({ 
+            message: "Certificate generated successfully.",
+            studentId,
+            certificateNumber,
+            issuedAt
+        });
+    } catch (error) {
+        console.error('Error generating certificate:', error);
+        res.status(500).json({ message: "Error generating certificate" });
+    }
 });
 
 // Start server
