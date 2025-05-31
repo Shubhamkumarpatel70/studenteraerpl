@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Form</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .form-container {
+            max-width: 450px;
+            margin: 40px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        label {
+            font-size: 14px;
+            color: #555;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+            outline: none;
+        }
+
+        /* Dropdown styles */
+        .dropdown-container {
+            position: relative;
+        }
+
+        .dropdown-results {
+            position: absolute;
+            width: 100%;
+            background: white;
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-results div {
+            padding: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .dropdown-results div:hover {
+            background: #f0f0f0;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .error, .success {
+            display: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="form-container">
+        <h2>Student Information</h2>
+        <form id="studentForm" novalidate>
+
+            <!-- Searchable Student ID field -->
+            <label for="studentSearch">Student ID</label>
+            <div class="dropdown-container">
+                <input type="text" id="studentSearch" name="studentId" placeholder="Type to search...">
+                <div class="dropdown-results" id="dropdownResults"></div>
+            </div>
+
+            <label for="course">Select Course</label>
+            <select id="course" name="course" required>
+                <option value="" disabled selected>Select a course</option>
+                <option value="Web Development">Web Development</option>
+                <option value="Android Development">Android Development</option>
+                <option value="Java Development">Java Development</option>
+                <option value="Python Development">Python Development</option>
+                <option value="Graphics Design">Graphics Design</option>
+                <option value="Data Analysts">Data Analysts</option>
+            </select>
+
+            <button type="submit">Submit</button>
+
+            <div class="loading">Submitting...</div>
+            <div class="error"></div>
+            <div class="success"></div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const studentSearchInput = document.getElementById("studentSearch");
+            const dropdownResults = document.getElementById("dropdownResults");
+            let studentIds = [];
+    
+            // Fetch student IDs from backend
+            try {
+                const response = await fetch('http://localhost:5000/generatedstudentidofregisteredstudentatstudenterastudentid');
+                const data = await response.json();
+                studentIds = data.students || [];
+            } catch (error) {
+                console.error("Error fetching student IDs:", error);
+            }
+    
+            // Live search filter
+            studentSearchInput.addEventListener("input", function () {
+                const searchText = this.value.toLowerCase();
+                dropdownResults.innerHTML = "";
+                if (searchText === "") {
+                    dropdownResults.style.display = "none";
+                    return;
+                }
+    
+                const filteredIds = studentIds.filter(id => id.toLowerCase().includes(searchText));
+    
+                if (filteredIds.length === 0) {
+                    dropdownResults.innerHTML = "<div>No student found</div>";
+                } else {
+                    filteredIds.forEach(id => {
+                        const option = document.createElement("div");
+                        option.textContent = id;
+                        option.addEventListener("click", function () {
+                            studentSearchInput.value = id;
+                            dropdownResults.style.display = "none";
+                        });
+                        dropdownResults.appendChild(option);
+                    });
+                }
+    
+                dropdownResults.style.display = "block";
+            });
+    
+            document.addEventListener("click", function (e) {
+                if (!studentSearchInput.contains(e.target) && !dropdownResults.contains(e.target)) {
+                    dropdownResults.style.display = "none";
+                }
+            });
+    
+            document.getElementById('studentForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+    
+                const studentId = studentSearchInput.value.trim();
+                const selectedCourse = document.getElementById('course').value;
+                const messageElement = document.querySelector('.success');
+                const errorElement = document.querySelector('.error');
+    
+                if (!studentId) {
+                    errorElement.textContent = "Please select a Student ID.";
+                    errorElement.style.display = "block";
+                    return;
+                }
+    
+                document.querySelector('.loading').style.display = 'block';
+    
+                try {
+                    const response = await fetch('http://localhost:5000/addStudent', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ studentId, course: selectedCourse })
+                    });
+    
+                    const data = await response.json();
+                    document.querySelector('.loading').style.display = 'none';
+    
+                    if (data.success) {
+                        messageElement.textContent = data.message;
+                        messageElement.style.display = "block";
+                        errorElement.style.display = "none"; // Hide error message if any
+                    } else {
+                        errorElement.textContent = data.message || "Error adding student.";
+                        errorElement.style.display = "block";
+                        messageElement.style.display = "none"; // Hide success message if any
+                    }
+                } catch (error) {
+                    document.querySelector('.loading').style.display = 'none';
+                    errorElement.textContent = "Server error.";
+                    errorElement.style.display = "block";
+                    messageElement.style.display = "none"; // Hide success message if any
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

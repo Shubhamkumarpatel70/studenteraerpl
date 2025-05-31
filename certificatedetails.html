@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Certificate Details</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+            text-align: left;
+        }
+
+        input, select, button {
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus, button:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #message {
+            font-size: 16px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .loading {
+            color: orange;
+        }
+
+        .error {
+            color: #d9534f;
+        }
+
+        .success {
+            color: #5bc0de;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                width: 90%;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            input, select, button {
+                font-size: 14px;
+            }
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+
+        .dropdown-options {
+            position: absolute;
+            top: 100%;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+        }
+
+        .dropdown-options.visible {
+            display: block;
+        }
+
+        .dropdown-options .option {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .dropdown-options .option:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Add Certificate Details</h2>
+
+        <form id="certificateForm">
+            <div class="form-group search-container">
+                <label for="studentId">Student ID:</label>
+                <input type="text" id="searchStudentId" class="search-input" placeholder="Search Student ID" oninput="filterStudentIds()">
+                <div id="studentIdDropdown" class="dropdown-options">
+                    <!-- Student IDs will be populated here -->
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="certificateNumber">Certificate Number:</label>
+                <input type="text" id="certificateNumber" placeholder="Enter Certificate Number" />
+            </div>
+
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" placeholder="Enter Name" />
+            </div>
+
+            <div class="form-group">
+                <label for="course">Internship Domain:</label>
+                <select id="course" class="dropdown">
+                    <option value="Web Development">Web Development</option>
+                    <option value="Android Development">Android Development</option>
+                    <option value="Java Development">Java Development</option>
+                    <option value="Python Development">Python Development</option>
+                    <option value="Graphics Design">Graphics Design</option>
+                    <option value="Data Analysts">Data Analysts</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Duration:</label>
+                <select id="duration" class="dropdown">
+                    <option value="2 weeks">2 weeks</option>
+                    <option value="3 weeks">3 weeks</option>
+                    <option value="4 weeks">4 weeks</option>
+                    <option value="5 weeks">5 weeks</option>
+                    <option value="6 weeks">6 weeks</option>
+                    <option value="7 weeks">7 weeks</option>
+                    <option value="8 weeks">8 weeks</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="college">College:</label>
+                <input type="text" id="college" placeholder="Enter College" />
+            </div>
+
+            <div class="form-group">
+                <label for="issuedDate">Issued Date:</label>
+                <input type="date" id="issuedDate" placeholder="Enter Issued Date" />
+            </div>
+
+            <button type="button" id="submitButton" onclick="addCertificate()">Submit</button>
+        </form>
+
+        <p id="message"></p>
+    </div>
+
+    <script>
+        let studentIds = [];
+
+        // Fetch student IDs from the server
+        function fetchStudentIds() {
+            const messageElement = document.getElementById("message");
+            messageElement.classList.add('loading');
+            messageElement.innerText = "Loading Student IDs...";
+
+            fetch('http://localhost:5000/api/student-ids')  // Use the correct endpoint
+                .then(response => response.json())
+                .then(data => {
+                    studentIds = data.validStudentIds || [];
+                    messageElement.innerText = ""; // Clear the loading message
+                })
+                .catch(error => {
+                    messageElement.classList.add('error');
+                    messageElement.innerText = "Error fetching student IDs.";
+                    console.error("Error:", error);
+                });
+        }
+
+        // Filter the student IDs based on the search input
+        function filterStudentIds() {
+            const searchInput = document.getElementById("searchStudentId").value.toLowerCase();
+            const filteredIds = studentIds.filter(id => id.toLowerCase().includes(searchInput));
+
+            const dropdown = document.getElementById("studentIdDropdown");
+            dropdown.innerHTML = '';  // Clear existing options
+
+            if (filteredIds.length > 0) {
+                filteredIds.forEach(studentId => {
+                    const option = document.createElement("div");
+                    option.classList.add("option");
+                    option.textContent = studentId;
+                    option.onclick = () => {
+                        document.getElementById("searchStudentId").value = studentId;
+                        dropdown.classList.remove("visible");
+                    };
+                    dropdown.appendChild(option);
+                });
+                dropdown.classList.add("visible");
+            } else {
+                dropdown.classList.remove("visible");
+                document.getElementById("message").innerText = "No matching student IDs found.";
+            }
+        }
+
+        // Add Certificate function (same as before)
+        function addCertificate() {
+            const studentId = document.getElementById("searchStudentId").value.trim();
+            const certificateNumber = document.getElementById("certificateNumber").value.trim();
+            const name = document.getElementById("name").value.trim();
+            const course = document.getElementById("course").value.trim();
+            const duration = document.getElementById("duration").value.trim();
+            const college = document.getElementById("college").value.trim();
+            const issuedDate = document.getElementById("issuedDate").value.trim();
+            const messageElement = document.getElementById("message");
+            const submitButton = document.getElementById("submitButton");
+
+            // Clear previous messages
+            messageElement.innerHTML = "";
+
+            // Input validation
+            if (!studentId || !certificateNumber || !name || !course || !duration || !college || !issuedDate) {
+                messageElement.classList.add('error');
+                messageElement.innerText = "All fields are required.";
+                return;
+            }
+
+            // Disable the submit button and show loading message
+            submitButton.disabled = true;
+            messageElement.classList.add('loading');
+            messageElement.innerText = "Adding certificate...";
+
+            const certificateData = {
+                studentId,
+                certificateNumber,
+                name,
+                course,
+                duration,
+                college,
+                issuedDate
+            };
+
+            // Send data to the backend
+            fetch('http://localhost:5000/add-certificate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(certificateData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                messageElement.classList.remove('loading');
+                submitButton.disabled = false;
+                document.getElementById("searchStudentId").value = "";
+                document.getElementById("certificateNumber").value = "";
+                document.getElementById("name").value = "";
+                document.getElementById("course").value = "";
+                document.getElementById("duration").value = "";
+                document.getElementById("college").value = "";
+                document.getElementById("issuedDate").value = "";
+
+                messageElement.classList.add('success');
+                messageElement.innerText = data.message || "Certificate added successfully!";
+            })
+            .catch(error => {
+                messageElement.classList.remove('loading');
+                messageElement.classList.add('error');
+                messageElement.innerText = "An error occurred while adding the certificate.";
+                console.error("Error:", error);
+            });
+        }
+
+        // Call the function to fetch student IDs when the page loads
+        window.onload = fetchStudentIds;
+    </script>
+
+</body>
+</html>

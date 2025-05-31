@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDENT ERA || UNDER DEVELOPMENT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Basic CSS for table styling */
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        th, td {
+          padding: 10px;
+          text-align: left;
+          border: 1px solid #ddd;
+        }
+        th {
+          background-color: #4CAF50; /* Green background color */
+          color: white; /* White text */
+          padding: 10px; /* Padding for spacing */
+          text-align: left; /* Align text to the left */
+          font-weight: bold; /* Bold text */
+        }
+      
+        .loadbutton {
+          background-color: #2563eb; /* Blue background */
+          color: white; /* White text */
+          padding: 12px 24px; /* Padding for size */
+          border-radius: 8px; /* Rounded corners */
+          font-size: 16px; /* Font size */
+          font-weight: 600; /* Bold font */
+          transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+          border: none; /* Remove border */
+          cursor: pointer; /* Pointer on hover */
+          display: inline-flex; /* Align icon and text */
+          align-items: center; /* Align the items vertically */
+        }
+      
+        .loadbutton:hover {
+          background-color: #1d4ed8; /* Darker blue on hover */
+          transform: scale(1.05); /* Slightly enlarge button on hover */
+        }
+      
+        .loadbutton:focus {
+          outline: none; /* Remove default focus outline */
+          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Blue outline on focus */
+        }
+      
+        .loadbutton i {
+          font-size: 20px; /* Icon size */
+        }
+      
+        .text-2xl {
+          font-size: 1.5rem;
+        }
+      
+        .font-semibold {
+          font-weight: 600;
+        }
+      
+        table a {
+          text-decoration: none;
+          color: #1d4ed8; /* Tailwind blue color */
+        }
+      
+        table a:hover {
+          text-decoration: underline;
+          color: #2563eb; /* Darker blue when hovered */
+        }
+      
+        /* Style the card popup */
+        .popup-card {
+            display: none; /* Initially hidden */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 300px;
+            text-align: center;
+            z-index: 9999;
+            border-radius: 10px;
+        }
+      
+        .popup-card p {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+      
+        /* Background overlay */
+        .overlay {
+            display: none; /* Initially hidden */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+            backdrop-filter: blur(10px); /* Apply background blur */
+        }
+      
+        /* Style for button */
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+      
+        button:hover {
+            background-color: #45a049;
+        }
+      
+      </style>
+</head>
+
+<body class="bg-gray-200 h-screen flex items-center justify-center">
+    <div class="w-full max-w-sm p-6 bg-white rounded-xl shadow-lg space-y-6">
+        <!-- Card Content -->
+        <div class="text-center">
+            <!-- Animated Icon -->
+            <svg class="mx-auto w-24 h-24 text-red-500 animate-pulse" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4m0 4h.01M21 12c0-4.97-4.03-9-9-9S3 7.03 3 12s4.03 9 9 9 9-4.03 9-9z" />
+            </svg>
+        </div>
+
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">Under Development</h1>
+        <p class="text-gray-600 text-lg mb-6">
+          This is under Development ! <br>Stay Tuned.
+        </p>
+    </div>
+
+       <!-- Overlay for background -->
+   <div class="overlay" id="overlay"></div>
+
+   <div class="popup-card" id="messageCard">
+     <p id="message"></p>
+ </div>
+
+ <script>
+    // Function to display the greeting message with the user's name and change avatar background color
+    function displayGreeting() {
+        const username = localStorage.getItem('username');  // Retrieve username from localStorage
+  
+        // Get the current hour
+        const currentHour = new Date().getHours();
+        let timeOfDay, avatarColor;
+  
+        // Determine the time of day based on the current hour
+        if (currentHour >= 5 && currentHour < 12) {
+            timeOfDay = 'Good Morning';
+            avatarColor = 'bg-yellow-400';  // Morning color (yellow)
+        } else if (currentHour >= 12 && currentHour < 18) {
+            timeOfDay = 'Good Afternoon';
+            avatarColor = 'bg-orange-400';  // Afternoon color (orange)
+        } else if (currentHour >= 18 && currentHour < 21) {
+            timeOfDay = 'Good Evening';
+            avatarColor = 'bg-blue-400';  // Evening color (blue)
+        } else {
+            timeOfDay = 'Good Night';
+            avatarColor = 'bg-indigo-400';  // Night color (indigo)
+        }
+  
+        // Display the greeting with the user's name or a generic greeting
+        const greetingMessage = document.getElementById('greetingMessage');
+        const avatarContainer = document.getElementById('avatarContainer');
+  
+        if (username) {
+            greetingMessage.textContent = `${timeOfDay}, ${username}!`;
+        } else {
+            greetingMessage.textContent = 'Hello, Dear!';
+        }
+  
+        // Remove any existing background colors from avatar container
+        avatarContainer.classList.remove('bg-yellow-400', 'bg-orange-400', 'bg-blue-400', 'bg-indigo-400');
+        
+        // Add the new background color class
+        avatarContainer.classList.add(avatarColor);
+    }
+  
+    // Global function to show popup
+    function showPopup(message) {
+        document.getElementById('message').innerText = message;
+        const overlay = document.getElementById('overlay');
+        const messageCard = document.getElementById('messageCard');
+        overlay.style.display = 'flex';
+        messageCard.style.display = 'block';
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            messageCard.style.display = 'none';
+        }, 1000); // Hide after 5 seconds
+    }
+  
+    // Check if the user is logged in
+    window.onload = function () {
+        // Display the greeting message
+        displayGreeting();
+    };
+  
+    // Logout function
+    function logout() {
+        localStorage.removeItem('loggedIn');
+        localStorage.removeItem('username');
+        localStorage.removeItem('role');
+        window.location.href = 'index.html'; // Redirect to login page after logout
+    }
+  </script>
+</body>
+
+</html>

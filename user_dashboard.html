@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STUDENT ERA || USER PANNEL</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <style>
+    /* Basic CSS for table styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #4CAF50; /* Green background color */
+      color: white; /* White text */
+      padding: 10px; /* Padding for spacing */
+      text-align: left; /* Align text to the left */
+      font-weight: bold; /* Bold text */
+    }
+  
+    .loadbutton {
+      background-color: #2563eb; /* Blue background */
+      color: white; /* White text */
+      padding: 12px 24px; /* Padding for size */
+      border-radius: 8px; /* Rounded corners */
+      font-size: 16px; /* Font size */
+      font-weight: 600; /* Bold font */
+      transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+      border: none; /* Remove border */
+      cursor: pointer; /* Pointer on hover */
+      display: inline-flex; /* Align icon and text */
+      align-items: center; /* Align the items vertically */
+    }
+  
+    .loadbutton:hover {
+      background-color: #1d4ed8; /* Darker blue on hover */
+      transform: scale(1.05); /* Slightly enlarge button on hover */
+    }
+  
+    .loadbutton:focus {
+      outline: none; /* Remove default focus outline */
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Blue outline on focus */
+    }
+  
+    .loadbutton i {
+      font-size: 20px; /* Icon size */
+    }
+  
+    .text-2xl {
+      font-size: 1.5rem;
+    }
+  
+    .font-semibold {
+      font-weight: 600;
+    }
+  
+    table a {
+      text-decoration: none;
+      color: #1d4ed8; /* Tailwind blue color */
+    }
+  
+    table a:hover {
+      text-decoration: underline;
+      color: #2563eb; /* Darker blue when hovered */
+    }
+  
+    /* Style the card popup */
+    .popup-card {
+        display: none; /* Initially hidden */
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        max-width: 300px;
+        text-align: center;
+        z-index: 9999;
+        border-radius: 10px;
+    }
+  
+    .popup-card p {
+        margin: 0;
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
+  
+    /* Background overlay */
+    .overlay {
+        display: none; /* Initially hidden */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9998;
+        backdrop-filter: blur(10px); /* Apply background blur */
+    }
+  
+    /* Style for button */
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+  
+    button:hover {
+        background-color: #45a049;
+    }
+  
+  </style>
+</head>
+<body class="font-sans bg-gray-100">
+
+  <!-- Sidebar -->
+  <div class="flex">
+
+<!-- Left Sidebar -->
+<div id="sidebar" class="w-72 bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900 text-white h-screen p-6 space-y-6 transition-all duration-300 ease-in-out fixed left-0 top-0 -translate-x-full lg:translate-x-0 z-50 overflow-y-auto">
+  <div class="flex justify-between items-center mb-6">
+    <!-- Hamburger Icon for mobile inside sidebar (hidden by default) -->
+    <button id="menuToggle" class="lg:hidden text-3xl text-white focus:outline-none">
+      <i id="menuIcon" class="fas fa-bars"></i> <!-- FontAwesome Hamburger Icon -->
+    </button>
+    <div class="text-3xl font-semibold text-center tracking-wider uppercase">Student Era</div>
+  </div>
+
+  <div>
+    <ul class="space-y-5">
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="dashboardLink">
+          <i class="fas fa-tachometer-alt mr-5 text-2xl"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="newRegistrationLink">
+          <i class="fas fa-user-plus mr-5 text-2xl"></i>
+          <span>New Registration</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="internshipRegistrationLink">
+          <i class="fas fa-clipboard-list mr-5 text-2xl"></i>
+          <span>Internship Domain Registration</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="certificateVerificationLink">
+          <i class="fas fa-certificate mr-5 text-2xl"></i>
+          <span>Certificate Verification</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="userfetchLink">
+          <i class="fas fa-search mr-5 text-2xl"></i>
+          <span>User Fetch Projects</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="useruploadtaskLink">
+          <i class="fas fa-upload mr-5 text-2xl"></i>
+          <span>User Uploaded Tasks</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="usergeneratedcertificateLink">
+          <i class="fas fa-certificate mr-5 text-2xl"></i>
+          <span>User Generated Certificate</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="feedbackdetailsLink">
+          <i class="fas fa-comment-dots mr-5 text-2xl"></i>
+          <span>Feedback Details</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="sentconfirmationLink">
+          <i class="fas fa-paper-plane mr-5 text-2xl"></i>
+          <span>Sent Confirmation Notification</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="generateconfirmationLink">
+          <i class="fas fa-file-signature mr-5 text-2xl"></i>
+          <span>Sent Offer Letter</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="contactusLink">
+          <i class="fas fa-phone-alt mr-5 text-2xl"></i>
+          <span>Contact Us</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://studentera.tech/" target="_blank" rel="noopener noreferrer" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200">
+          <i class="fas fa-external-link-alt mr-5 text-2xl"></i>
+          <span>Visit Website</span>
+        </a>
+      </li>
+      <li class="mt-8">
+        <button class="w-full py-3 px-5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all ease-in-out duration-200 flex items-center justify-center" onclick="logout()">
+          <i class="fas fa-sign-out-alt mr-3 text-xl"></i>
+          <span>Logout</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+    <!-- Main Content Area -->
+    <div class="flex-1 p-6 bg-gray-100 ml-0 lg:ml-64">
+      
+<!-- Top Navigation Bar -->
+<div class="flex justify-between items-center bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-4 rounded-lg shadow-md mb-6">
+  <div class="flex items-center space-x-6">
+    <!-- Hamburger Icon for mobile (this will be aligned to the right when sidebar is open) -->
+    <button id="menuToggleTop" class="lg:hidden text-3xl text-white hover:text-gray-300 focus:outline-none">
+      <i id="topMenuIcon" class="fas fa-bars"></i> <!-- FontAwesome Hamburger Icon -->
+    </button>
+    <div class="text-2xl font-semibold text-white tracking-wide">User Dashboard</div>
+  </div>
+
+  <!-- Greeting message and user avatar -->
+  <div class="flex items-center space-x-6"> 
+    <div id="greetingMessage" class="text-lg font-medium text-white">Welcome, User</div>
+    <!-- Avatar with dynamic background effect -->
+    <div id="avatarContainer" class="rounded-full w-16 h-16 border-2 border-white p-1 cursor-pointer hover:scale-110 transform transition-all duration-300 border-gradient">
+      <img src="project-folder/images/logo.jpg" alt="Avatar" class="rounded-full w-full h-full object-cover">
+    </div>
+  </div>
+</div>
+
+
+   <!-- Content Sections -->
+<div id="dashboardContent" class="content-section py-6 px-4 bg-gray-50">
+  <!-- Dashboard Content -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+<!-- Card 1: Total Students -->
+<div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">Total Students</div> <!-- Title in white for high contrast -->
+  <div id="totalStudentsCount" class="text-5xl text-yellow-400 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in yellow for prominence -->
+</div>
+
+
+<!-- Card 2: New Registrations -->
+<div class="bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">New Registrations</div> <!-- Title in white for high contrast -->
+  <div id="newRegistrationsCount" class="text-5xl text-yellow-400 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in yellow for prominence -->
+</div>
+
+
+<!-- Card 3: Generated Certificate -->
+<div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">Generated Certificate</div> <!-- Title in white for high contrast -->
+  <div id="certificategeneratedCount" class="text-5xl text-yellow-400 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in yellow for visibility -->
+</div>
+
+
+<!-- Card 4: Apply for Internships -->
+<div class="bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">Apply for Internships</div> <!-- Title in white for contrast -->
+  <div id="appliedInternshipsCount" class="text-5xl text-yellow-400 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in orange for vibrancy -->
+</div>
+
+
+    <!-- Card 5: Queries/Contact -->
+<div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">Queries/Contact</div> <!-- Title in white for contrast -->
+  <div id="queriesCount" class="text-5xl text-yellow-300 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in yellow for prominence -->
+</div>
+
+  
+  </div>
+</div>
+
+      <div id="newRegistrationContent" class="content-section hidden">
+        <!-- New Registration Content -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-semibold text-gray-700">New Registration Form</div>
+                <button class="loadbutton" onclick="fetchData('newRegistration')">
+                  <i class="fas fa-file-import mr-2"></i> Load Data
+                </button>                   
+            </div>
+            <!-- New Registration Table to display the data -->
+            <table id="newRegistrationTable">
+                <thead>
+                    <tr>
+                      <th>DOR</th>
+                        <th>Full Name</th>
+                        <th>Mobile</th>
+                        <th>Student ID</th>
+                        <th>Email</th>
+                        <th>College</th>
+                        <th>Branch</th>
+                        <th>Academic Year</th>
+                        <th>Internship Domain</th>
+                        <th>Internship Duration</th>
+                        <th>Payment Option</th>
+                        <th>Transaction ID</th>
+                        <th>Referral-Id</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data rows for New Registration will go here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div id="internshipRegistrationContent" class="content-section hidden">
+        <!-- Internship Domain Registration Content -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-semibold text-gray-700">Internship Domain Registration</div>
+                <button class="loadbutton" onclick="fetchData('internshipRegistration')">
+                  <i class="fas fa-file-import mr-2"></i> Load Data
+                </button>                   
+            </div>
+            <!-- Internship Registration Table to display the data -->
+            <table id="internshipRegistrationTable">
+                <thead>
+                    <tr>
+                      <th>Date of Registration</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Student-Id</th>
+                        <th>Duration</th>
+                        <th>Domain</th>
+                        <th>Terms</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data rows for Internship Registration will go here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div id="certificateVerificationContent" class="content-section hidden">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="flex justify-between items-center mb-4">
+            <div class="text-2xl font-semibold text-gray-700">Certificate Verification</div>
+            <button class="loadbutton" onclick="fetchData('certificateVerification')">
+              <i class="fas fa-file-import mr-2"></i> Load Data
+            </button>
+          </div>
+          <!-- Certificate Verification Table -->
+          <table id="certificateVerificationTable" class="table-auto w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-200">
+                <th class="px-4 py-2 border" >Date of Verification</th>
+                <th class="px-4 py-2 border">Certificate Number</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Data rows will go here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div id="userfetchContent" class="content-section hidden">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <div class="text-2xl font-semibold text-gray-700">User Fetch Projects</div>
+                <button class="loadbutton" onclick="fetchData('userFetchProjects')">
+                  <i class="fas fa-file-import mr-2"></i> Load Data
+                </button>
+            </div>
+            <!-- User Fetch Projects Table -->
+            <table id="userFetchProjectsTable" class="table-auto w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="px-4 py-2 border">Date of Fetch Tasks</th>
+                        <th class="px-4 py-2 border">Student Name</th>
+                        <th class="px-4 py-2 border">Student ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data rows will go here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div id="useruploadtaskContent" class="content-section hidden">
+      <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="flex justify-between items-center mb-4">
+              <div class="text-2xl font-semibold text-gray-700">User Uploaded Tasks</div>
+              <button class="loadbutton" onclick="fetchData('userUploadTasks')">
+                  <i class="fas fa-file-import mr-2"></i> Load Data
+              </button>
+          </div>
+          <!-- User Upload Tasks Table -->
+          <table id="userUploadTasksTable" class="table-auto w-full text-left border-collapse">
+              <thead>
+                  <tr class="bg-gray-200">
+                      <th class="px-4 py-2 border">Date of upload tasks</th>
+                      <th class="px-4 py-2 border">Student Id</th>
+                      <th class="px-4 py-2 border">Project Link 01</th>
+                      <th class="px-4 py-2 border">Project Link 02</th>
+                      <th class="px-4 py-2 border">Project Link 03</th>
+                      <th class="px-4 py-2 border">Project Link 04 (Optional)</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- Data rows will go here -->
+              </tbody>
+          </table>
+      </div>
+  </div>
+    
+      <div id="usergeneratedcertificateContent" class="content-section hidden">
+        <!-- User Generated Certificate -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <div class="text-2xl font-semibold text-gray-700">User Generated Certificates</div>
+                <button class="loadbutton" onclick="fetchData('userGeneratedCertificates')">
+                  <i class="fas fa-file-import mr-2"></i> Load Data
+                </button>
+            </div>
+            <!-- User Fetch Projects Table -->
+            <table id="userGeneratedCertificatesTable" class="table-auto w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                      <th class="px-4 py-2 border">Date of Certificate generating</th>
+                        <th class="px-4 py-2 border">Student Name</th>
+                        <th class="px-4 py-2 border">Email</th>
+                        <th class="px-4 py-2 border">Student ID</th>
+                        <th class="px-4 py-2 border">Document Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data rows will go here -->
+                </tbody>
+            </table>
+        </div>
+      </div>
+
+      <div id="feedbackdetailsContent" class="content-section hidden">
+        <!-- Feedback Details -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <div class="text-2xl font-semibold text-gray-700">Feedback Response</div>
+                <button class="loadbutton" onclick="fetchData('feedbackResponse')">
+                  <i class="fas fa-file-import mr-2"></i> Load Data
+                </button>
+            </div>
+            <!-- User Fetch Projects Table -->
+            <table id="feedbackResponseTable" class="table-auto w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                      <th class="px-4 py-2 border">Dat of submit</th>
+                        <th class="px-4 py-2 border">Student Name</th>
+                        <th class="px-4 py-2 border">Student ID</th>
+                        <th class="px-4 py-2 border">Rating</th>
+                        <th class="px-4 py-2 border">Feedback</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data rows will go here -->
+                </tbody>
+            </table>
+        </div>
+      </div>
+
+      <div id="sentconfirmationContent" class="content-section hidden">
+        <!-- Sent Confirmation Notification -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <div class="text-2xl font-semibold text-gray-700">Sent Confirmation Email Notification</div>
+                <button class="loadbutton" onclick="fetchData('sentConfirmation')">
+                  <i class="fas fa-file-import mr-2"></i> Load Data
+                </button>
+            </div>
+            <!-- Sent Confirmation Table -->
+            <table id="sentConfirmationTable" class="table-auto w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                      <th class="px-4 py-2 border">Date of sent Email </th>
+                        <th class="px-4 py-2 border">Student Name</th>
+                        <th class="px-4 py-2 border">User Email</th>
+                        <th class="px-4 py-2 border">Student Id</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data rows will go here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+     <!-- Send Confirmation Notification Page -->
+     <div id="sendconfirmationContent" class="content-section hidden">
+      <!-- Send Confirmation Notification Section -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Send Registration Confirmation Notification</h2>
+        
+        <!-- Option 1: Embed the external site -->
+        <div class="mt-4">
+          <iframe 
+            src="sendnotification.html" 
+            class="w-full h-96 border border-gray-300 rounded-md shadow-md" 
+            title="Send Notification" 
+            loading="lazy" 
+            sandbox="allow-scripts allow-same-origin allow-forms" 
+            aria-label="Send Notification Embedded Page">
+          </iframe>
+        </div>
+        
+    
+        <!-- Divider -->
+        <div class="my-6 border-t border-gray-200"></div>
+    
+      </div>
+    </div>
+    
+<div id="generateconfirmationContent" class="content-section hidden">
+  <!-- Sent Confirmation Notification -->
+  <div class="bg-white p-6 rounded-lg shadow-md">
+      <div class="flex justify-between items-center mb-4">
+          <div class="text-2xl font-semibold text-gray-700">Sent Offer Letter Confirmation</div>
+          <button class="loadbutton" onclick="fetchData('generateConfirmation')">
+            <i class="fas fa-file-import mr-2"></i> Load Data
+          </button>
+      </div>
+      <!-- Sent Confirmation Table -->
+      <table id="generateConfirmationTable" class="table-auto w-full text-left border-collapse">
+          <thead>
+              <tr class="bg-gray-200">
+                <th class="px-4 py-2 border">Date of sent email</th>
+                  <th class="px-4 py-2 border">Student Name</th>
+                  <th class="px-4 py-2 border">Student Email</th>
+                  <th class="px-4 py-2 border">Student Id</th>
+                  <th class="px-4 py-2 border">Date of Starting</th>
+                  <th class="px-4 py-2 border">Date of Ending</th>
+              </tr>
+          </thead>
+          <tbody>
+              <!-- Data rows will go here -->
+          </tbody>
+      </table>
+  </div>
+</div>
+
+   <!-- Send offer letter Page -->
+   <div id="sendofferletterContent" class="content-section hidden">
+    <!-- Send Confirmation Notification Section -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-2xl font-semibold text-gray-700 mb-4">Send offer letter Notification</h2>
+      
+     <!-- Option 1: Embed the external site -->
+     <div class="mt-4">
+      <iframe 
+        src="offerletternotificationsender.html" 
+        class="w-full h-96 border border-gray-300 rounded-md shadow-md" 
+        title="Send Notification" 
+        loading="lazy" 
+        sandbox="allow-scripts allow-same-origin allow-forms" 
+        aria-label="Send Notification Embedded Page">
+      </iframe>
+    </div>
+      
+  
+      <!-- Divider -->
+      <div class="my-6 border-t border-gray-200"></div>
+  
+    </div>
+  </div>
+
+    <!-- Send reminder Page -->
+    <div id="sendreminderContent" class="content-section hidden">
+      <!-- Send Confirmation Notification Section -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Send Reminder</h2>
+        
+       <!-- Option 1: Embed the external site -->
+       <div class="mt-4">
+        <iframe 
+          src="updateUserPage.html" 
+          class="w-full h-96 border border-gray-300 rounded-md shadow-md" 
+          title="Send Reminder" 
+          loading="lazy" 
+          sandbox="allow-scripts allow-same-origin allow-forms allow-modals" 
+          aria-label="Send Notification Embedded Page">
+        </iframe>
+    </div>
+        
+        <!-- Divider -->
+        <div class="my-6 border-t border-gray-200"></div>
+    
+      </div>
+    </div>
+
+      <div id="contactusContent" class="content-section hidden">
+        <!-- Contact Us -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <div class="text-2xl font-semibold text-gray-700">Contact Us Queries</div>
+                <button class="loadbutton" onclick="fetchData('contactUs')">
+                  <i class="fas fa-file-import mr-2"></i> Load Data
+                </button>
+            </div>
+            <!-- Sent Confirmation Table -->
+            <table id="contactUsTable" class="table-auto w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                      <th class="px-4 py-2 border">Date of queries</th>
+                        <th class="px-4 py-2 border">Name</th>
+                        <th class="px-4 py-2 border">Subject</th>
+                        <th class="px-4 py-2 border">Email</th>
+                        <th class="px-4 py-2 border">Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data rows will go here -->
+                </tbody>
+            </table>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+      <!-- Overlay for background -->
+      <div class="overlay" id="overlay"></div>
+
+      <!-- Card-style Popup -->
+      <div class="popup-card" id="messageCard">
+          <p id="message"></p>
+      </div>
+  <!-- Mobile Responsiveness and Sidebar Toggle -->
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const menuToggleTop = document.getElementById('menuToggleTop');
+    const sidebar = document.getElementById('sidebar');
+    const body = document.querySelector('body');
+    const menuIcon = document.getElementById('menuIcon');
+    const topMenuIcon = document.getElementById('topMenuIcon');
+
+    // For toggling the sidebar
+    function toggleSidebar() {
+      sidebar.classList.toggle('-translate-x-full');
+      sidebar.classList.toggle('translate-x-0');
+      body.classList.toggle('overflow-hidden'); // Prevent scrolling when sidebar is open
+
+      // Toggle the menu icon between bars and cross
+      if (sidebar.classList.contains('translate-x-0')) {
+        menuIcon.classList.replace('fa-bars', 'fa-times'); // Change to X when sidebar is open
+        topMenuIcon.classList.replace('fa-bars', 'fa-times'); // Change to X on top bar
+      } else {
+        menuIcon.classList.replace('fa-times', 'fa-bars'); // Change back to bars when sidebar is closed
+        topMenuIcon.classList.replace('fa-times', 'fa-bars'); // Change back to bars on top bar
+      }
+    }
+
+    menuToggle.addEventListener('click', toggleSidebar);
+    menuToggleTop.addEventListener('click', toggleSidebar);
+
+    // Toggle visibility of content sections
+    const dashboardLink = document.getElementById('dashboardLink');
+    const newRegistrationLink = document.getElementById('newRegistrationLink');
+    const internshipRegistrationLink = document.getElementById('internshipRegistrationLink');
+    const certificateVerificationLink = document.getElementById('certificateVerificationLink');
+    const userfetchLink = document.getElementById('userfetchLink');
+    const useruploadtaskLink = document.getElementById('useruploadtaskLink');
+    const usergeneratedcertificateLink = document.getElementById('usergeneratedcertificateLink');
+    const feedbackdetailsLink = document.getElementById('feedbackdetailsLink');
+    const sentconfirmationLink = document.getElementById('sentconfirmationLink');
+    const generateconfirmationLink = document.getElementById('generateconfirmationLink');
+    const contactusLink = document.getElementById('contactusLink');
+
+    const dashboardContent = document.getElementById('dashboardContent');
+    const newRegistrationContent = document.getElementById('newRegistrationContent');
+    const internshipRegistrationContent = document.getElementById('internshipRegistrationContent');
+    const certificateVerificationContent = document.getElementById('certificateVerificationContent');
+    const userfetchContent = document.getElementById('userfetchContent');
+    const useruploadtaskContent = document.getElementById('useruploadtaskContent');
+    const usergeneratedcertificateContent = document.getElementById('usergeneratedcertificateContent');
+    const feedbackdetailsContent = document.getElementById('feedbackdetailsContent');
+    const sentconfirmationContent = document.getElementById('sentconfirmationContent');
+    const generateconfirmationContent = document.getElementById('generateconfirmationContent');
+    const contactusContent = document.getElementById('contactusContent');
+
+    // Function to hide all content sections
+    function hideAllSections() {
+      dashboardContent.classList.add('hidden');
+      newRegistrationContent.classList.add('hidden');
+      internshipRegistrationContent.classList.add('hidden');
+      certificateVerificationContent.classList.add('hidden');
+      userfetchContent.classList.add('hidden');
+      useruploadtaskContent.classList.add('hidden');
+      usergeneratedcertificateContent.classList.add('hidden');
+      feedbackdetailsContent.classList.add('hidden');
+      sentconfirmationContent.classList.add('hidden');
+      generateconfirmationContent.classList.add('hidden');
+      contactusContent.classList.add('hidden');
+    }
+
+    // Event listeners for sidebar links to show corresponding content
+    dashboardLink.addEventListener('click', () => {
+      hideAllSections();
+      dashboardContent.classList.remove('hidden');
+    });
+
+    newRegistrationLink.addEventListener('click', () => {
+      hideAllSections();
+      newRegistrationContent.classList.remove('hidden');
+    });
+
+    internshipRegistrationLink.addEventListener('click', () => {
+      hideAllSections();
+      internshipRegistrationContent.classList.remove('hidden');
+    });
+
+    certificateVerificationLink.addEventListener('click', () => {
+      hideAllSections();
+      certificateVerificationContent.classList.remove('hidden');
+    });
+
+    userfetchLink.addEventListener('click', () => {
+      hideAllSections();
+      userfetchContent.classList.remove('hidden');
+    });
+
+    useruploadtaskLink.addEventListener('click', () => {
+      hideAllSections();
+      useruploadtaskContent.classList.remove('hidden');
+    });
+
+    usergeneratedcertificateLink.addEventListener('click', () => {
+      hideAllSections();
+      usergeneratedcertificateContent.classList.remove('hidden');
+    });
+
+    feedbackdetailsLink.addEventListener('click', () => {
+      hideAllSections();
+      feedbackdetailsContent.classList.remove('hidden');
+    });
+
+    sentconfirmationLink.addEventListener('click', () => {
+      hideAllSections();
+      sentconfirmationContent.classList.remove('hidden');
+    });
+
+    generateconfirmationLink.addEventListener('click', () => {
+      hideAllSections();
+      generateconfirmationContent.classList.remove('hidden');
+    });
+
+    contactusLink.addEventListener('click', () => {
+      hideAllSections();
+      contactusContent.classList.remove('hidden');
+    });
+  </script>
+
+<script>
+  // Function to show a specific section
+  function showSection(sectionId) {
+      // Hide all sections
+      document.querySelectorAll('.content-section').forEach((section) => {
+          section.classList.add('hidden');
+      });
+
+      // Show the selected section
+      const section = document.getElementById(sectionId);
+      if (section) {
+          section.classList.remove('hidden');
+      } else {
+          console.error('Section not found:', sectionId);
+      }
+  }
+
+  // URLs of CSV files for each section
+  const dataUrls = {
+      newRegistration: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRGRsVHf_IQ3MhieEiJL34Shz4i3xLaK-CzxmX53Qtx8Uk7n7_FmyyVQNLofWl9bvVAG3N7XH7WDj1/pub?output=csv',
+      internshipRegistration: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRgVDawdn_MGLRP5XSoRL3Z3HVnJJizuvLv-WMpBrr9qzthiFz-wW3ji7N7mWc3AigF65MmqVMr_MAK/pub?output=csv',
+      certificateVerification: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQkHZIC8DMd2eIW3_UCl3s1RdvRxZ_cjkwaUU6n6NLRKUv_oRMnrBXc4ojWt9Zl4uz29BO4OZ0v4Gxx/pub?output=csv',
+      userFetchProjects: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRa5mWClK5Fdno-4Z00uHP7jtN4VsFUR7sgdySzJ7Zy7-Yg3lwiDG07QrbDKUD90XJnvYqXMyGOZYnR/pub?output=csv',
+      userUploadTasks: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdYKGVOEOjX49cqlRWdiH9blDR7oJYCJ9t-_7fcd33WkKgoMSd0Xt3Y_dbGbJryzMz2qKElgXE3qcx/pub?output=csv', 
+      userGeneratedCertificates: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT8OWQIbdH0FRQi_EdswhCnFRrfvQcvaUuQ6OHAhB9wti2LQICBiQcc_KDfRw-oGITtapYZ4HAMIQhs/pub?output=csv',
+      feedbackResponse: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSyZGt2XsA76WCY1FcBpHIUMc3lqyMlFCusWlBaJDS-KyRjRLvTSUcnX8t2vpzi_0JzYfRJGa0v921O/pub?output=csv',
+      sentConfirmation: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTl3xtfkwBa-Zv34widdNTiJefCuO521-07Hf9THFtU1zIy38etCRe2fkzJOUwDqWYVNCDQUGhCqaok/pub?output=csv',
+      generateConfirmation: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSqGHqAHz2bj4yLiEOzXzrE7KTzqvCLaDHSSkJpOVzRf8Gn22HuscrsLyOXNifXIf6MHD385ojbePIY/pub?output=csv',
+      contactUs: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWBd8u7ZRxnmfiwhJtWbPnAPWD4zxv9eCg9bFmXs_XFnGZgtSxLMk2J59DiaLowTLP8g7saukd85ba/pub?output=csv',
+  };
+
+  function fetchData(section) {
+      const url = dataUrls[section];
+      if (!url) {
+          console.error('Invalid section:', section);
+          return;
+      }
+
+      fetch(url)
+          .then((response) => response.text())
+          .then((data) => {
+              populateTable(data, `${section}Table`);
+          })
+          .catch((error) => {
+              console.error(`Error fetching data for ${section}:`, error);
+          });
+  }
+
+  // Populate data into the appropriate table
+  function populateTable(csvData, tableId) {
+      const rows = csvData.split('\n');
+      const tableBody = document.querySelector(`#${tableId} tbody`);
+      tableBody.innerHTML = ''; // Clear previous data
+
+      rows.forEach((row, index) => {
+          if (index === 0) return; // Skip header row
+          const cells = row.split(',').map(cell => cell.trim()); // Clean up cells
+
+          const tableRow = document.createElement('tr');
+          
+          cells.forEach((cell, cellIndex) => {
+              const tableCell = document.createElement('td');
+              const cellData = cell;
+
+              // If the cell contains a URL, make it clickable and add an icon
+              if (cellData && cellData.startsWith('http')) {
+                  const link = document.createElement('a');
+                  link.href = cellData;
+                  link.target = '_blank'; // Open in new tab
+                  
+                  // Create the Font Awesome icon element
+                  const icon = document.createElement('i');
+                  icon.className = 'fas fa-link mr-2';  // Font Awesome link icon with margin
+                  
+                  // Append the icon and the text to the link
+                  link.appendChild(icon);
+                  link.appendChild(document.createTextNode(`Link for Project ${cellIndex - 1}`));
+
+                  tableCell.appendChild(link);
+              } else {
+                  tableCell.textContent = cellData || '-';  // If the link is missing, show a hyphen
+              }
+
+              tableCell.className = 'px-4 py-2 border';
+              tableRow.appendChild(tableCell);
+          });
+
+          tableBody.appendChild(tableRow);
+      });
+  }
+</script>
+  
+
+
+<script>
+  // Check if the user is logged in and if their role is 'admin'
+  window.onload = function() {
+      const userRole = localStorage.getItem('role'); // Get the role from localStorage
+      const overlay = document.getElementById('overlay');
+      const messageCard = document.getElementById('messageCard');
+
+      // If no user is logged in or the role is not 'admin', redirect to the login page
+      if (!userRole || userRole !== 'user') {
+          document.getElementById('message').innerText = 'You are not authorized to access this page. Redirecting to login...';
+          // Show the overlay and the popup card
+          overlay.style.display = 'block';
+          messageCard.style.display = 'block';
+          
+          // Remove popup and overlay after 5 seconds
+          setTimeout(() => {
+              overlay.style.display = 'none';
+              messageCard.style.display = 'none';
+              window.location.href = 'index.html'; // Redirect to login page
+          }, 1000); // Hide after 5 seconds
+      } else {
+          document.getElementById('message').innerText = 'You are successfully logged in as an User!';
+          overlay.style.display = 'block';
+          messageCard.style.display = 'block';
+
+          // Remove popup and overlay after 5 seconds
+          setTimeout(() => {
+              overlay.style.display = 'none';
+              messageCard.style.display = 'none';
+          }, 1000); // Hide after 5 seconds
+      }
+  };
+
+  // Logout function
+  function logout() {
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('role');
+      window.location.href = 'index.html'; // Redirect to login page after logout
+  }
+</script>
+
+<script>
+  // Function to display the greeting message with the user's name and change avatar background color
+  function displayGreeting() {
+      const username = localStorage.getItem('username');  // Retrieve username from localStorage
+
+      // Get the current hour
+      const currentHour = new Date().getHours();
+      let timeOfDay, avatarColor;
+
+      // Determine the time of day based on the current hour
+      if (currentHour >= 5 && currentHour < 12) {
+          timeOfDay = 'Good Morning';
+          avatarColor = 'bg-yellow-400';  // Morning color (yellow)
+      } else if (currentHour >= 12 && currentHour < 18) {
+          timeOfDay = 'Good Afternoon';
+          avatarColor = 'bg-orange-400';  // Afternoon color (orange)
+      } else if (currentHour >= 18 && currentHour < 21) {
+          timeOfDay = 'Good Evening';
+          avatarColor = 'bg-blue-400';  // Evening color (blue)
+      } else {
+          timeOfDay = 'Good Night';
+          avatarColor = 'bg-indigo-400';  // Night color (indigo)
+      }
+
+      // Display the greeting with the user's name or a generic greeting
+      const greetingMessage = document.getElementById('greetingMessage');
+      const avatarContainer = document.getElementById('avatarContainer');
+
+      if (username) {
+          greetingMessage.textContent = `${timeOfDay}, ${username}!`;
+      } else {
+          greetingMessage.textContent = 'Hello, Dear!';
+      }
+
+      // Remove any existing background colors from avatar container
+      avatarContainer.classList.remove('bg-yellow-400', 'bg-orange-400', 'bg-blue-400', 'bg-indigo-400');
+      
+      // Add the new background color class
+      avatarContainer.classList.add(avatarColor);
+  }
+
+  // Global function to show popup
+  function showPopup(message) {
+      document.getElementById('message').innerText = message;
+      const overlay = document.getElementById('overlay');
+      const messageCard = document.getElementById('messageCard');
+      overlay.style.display = 'flex';
+      messageCard.style.display = 'block';
+      setTimeout(() => {
+          overlay.style.display = 'none';
+          messageCard.style.display = 'none';
+      }, 3000); // Hide after 5 seconds
+  }
+
+  // Check if the user is logged in and if their role is 'admin'
+  window.onload = function () {
+      const userRole = localStorage.getItem('role'); // Get the role from localStorage
+
+      // If no user is logged in or the role is not 'admin', redirect to the login page
+      if (!userRole || userRole !== 'user') {
+          showPopup('You are not authorized to access this page. Redirecting to login...');
+          setTimeout(() => {
+              window.location.href = 'index.html'; // Redirect to login page
+          }, 3000);
+      } else {
+          showPopup('You are successfully logged in as an User! Please Wait ...');
+      }
+
+      // Display the greeting message
+      displayGreeting();
+  };
+
+  // Logout function
+  function logout() {
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('username');
+      localStorage.removeItem('role');
+      window.location.href = 'index.html'; // Redirect to login page after logout
+  }
+</script>
+<script src="script.js"></script>
+  <script src="project-folder/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDENT ERA || SCHEDULE MEETINGS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <style>
+        .toast {
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300 font-sans leading-relaxed">
+
+    <!-- Main Container -->
+    <div class="container mx-auto p-8 max-w-7xl">
+
+        <!-- Page Header -->
+        <div class="bg-white p-6 rounded-lg shadow-xl mb-8">
+            <h1 class="text-3xl font-semibold text-gray-800 mb-2">Schedule a Meeting</h1>
+            <p class="text-gray-600 text-lg">Fill in the details below to schedule a new meeting.</p>
+        </div>
+
+        <!-- Meeting Form -->
+        <form id="meetingForm" class="bg-white p-8 rounded-lg shadow-lg mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="topic" class="block text-gray-700 text-lg">Topic</label>
+                    <input type="text" id="topic" class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label for="host" class="block text-gray-700 text-lg">Host</label>
+                    <input type="text" id="host" class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label for="date" class="block text-gray-700 text-lg">Date</label>
+                    <input type="date" id="date" class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label for="time" class="block text-gray-700 text-lg">Time</label>
+                    <input type="time" id="time" class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label for="link" class="block text-gray-700 text-lg">Meeting Link</label>
+                <input type="url" id="link" class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+
+            <div class="text-right">
+                <button type="submit" id="submitButton" class="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
+                    Schedule Meeting
+                </button>
+            </div>
+        </form>
+
+        <!-- Scheduled Meetings Table -->
+        <div class="bg-white p-6 rounded-lg shadow-xl">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Scheduled Meetings</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full table-auto bg-white rounded-lg shadow-md">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Topic</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Date</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Time</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Host</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scheduledMeetings" class="text-gray-700">
+                        <!-- Dynamic rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script>
+        const meetingForm = document.getElementById('meetingForm');
+        const scheduledMeetingsDiv = document.getElementById('scheduledMeetings');
+        const submitButton = document.getElementById('submitButton');
+
+        let isEditing = false;
+        let editingMeetingId = null;
+
+        // Load scheduled meetings
+       // Load scheduled meetings
+async function loadScheduledMeetings() {
+    try {
+        const response = await fetch('http://localhost:5000/meetings');
+        const data = await response.json();
+        scheduledMeetingsDiv.innerHTML = ''; // Clear current meetings
+
+        data.meetings.forEach(meeting => {
+            const meetingRow = document.createElement('tr');
+            meetingRow.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-50', 'transition-all', 'duration-200');
+
+            meetingRow.innerHTML = `
+                <td class="px-6 py-3">${meeting.topic}</td>
+                <td class="px-6 py-3">${meeting.date}</td>
+                <td class="px-6 py-3">${meeting.time}</td>
+                <td class="px-6 py-3">${meeting.host}</td>
+                <td class="px-6 py-3 text-center">
+                    <button onclick="startMeeting('${meeting.link}')" class="text-green-500 hover:text-green-700 p-4 text-lg rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-200">
+                        <i class="fas fa-play fa-lg"></i>
+                    </button>
+                    <button onclick="editMeeting('${meeting.id}', '${meeting.topic}', '${meeting.date}', '${meeting.time}', '${meeting.host}', '${meeting.link}')" class="text-yellow-500 hover:text-yellow-700 p-4 text-lg rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 ml-2">
+                        <i class="fas fa-edit fa-lg"></i>
+                    </button>
+                    <button onclick="deleteMeeting('${meeting.id}')" class="text-red-500 hover:text-red-700 p-4 text-lg rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 ml-2">
+                        <i class="fas fa-trash fa-lg"></i>
+                    </button>
+                </td>
+            `;
+
+            scheduledMeetingsDiv.appendChild(meetingRow);
+        });
+    } catch (error) {
+        console.error('Error loading scheduled meetings:', error);
+    }
+}
+
+// Edit a meeting
+function editMeeting(id, topic, date, time, host, link) {
+    document.getElementById('topic').value = topic;
+    document.getElementById('date').value = date;
+    document.getElementById('time').value = time;
+    document.getElementById('host').value = host;
+    document.getElementById('link').value = link;
+
+    isEditing = true;
+    editingMeetingId = id;
+    submitButton.textContent = 'Update Meeting';
+}
+
+// Delete a meeting
+async function deleteMeeting(id) {
+    const confirmation = confirm(`Are you sure you want to delete this meeting?`);
+    if (!confirmation) return;
+
+    try {
+        const response = await fetch('http://localhost:5000/delete-meeting', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id }),
+        });
+
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message);
+
+        showAlert(result.message);
+        loadScheduledMeetings();  // Reload meetings after deletion
+    } catch (error) {
+        showAlert(error.message, 'error');
+    }
+}
+
+
+        // Edit a meeting
+        function editMeeting(id, topic, date, time, host, link) {
+            document.getElementById('topic').value = topic;
+            document.getElementById('date').value = date;
+            document.getElementById('time').value = time;
+            document.getElementById('host').value = host;
+            document.getElementById('link').value = link;
+
+            isEditing = true;
+            editingMeetingId = id;
+            submitButton.textContent = 'Update Meeting';
+        }
+
+        // Handle form submit
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const meeting = {
+                topic: document.getElementById('topic').value,
+                date: document.getElementById('date').value,
+                time: document.getElementById('time').value,
+                host: document.getElementById('host').value,
+                link: document.getElementById('link').value,
+            };
+
+            try {
+                if (isEditing) {
+                    meeting.id = editingMeetingId;
+                    const response = await fetch('http://localhost:5000/edit-meeting', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(meeting),
+                    });
+
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message);
+
+                    showAlert(result.message);
+                } else {
+                    const response = await fetch('http://localhost:5000/schedule-meeting', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(meeting),
+                    });
+
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message);
+
+                    showAlert(result.message);
+                }
+
+                isEditing = false;
+                editingMeetingId = null;
+                submitButton.textContent = 'Schedule Meeting';
+                meetingForm.reset();
+                loadScheduledMeetings();
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        // Delete a meeting
+        async function deleteMeeting(id) {
+            const confirmation = confirm(`Are you sure you want to delete this meeting?`);
+            if (!confirmation) return;
+
+            try {
+                const response = await fetch('http://localhost:5000/delete-meeting', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id }),
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message);
+
+                showAlert(result.message);
+                loadScheduledMeetings();
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        // Start a meeting
+        function startMeeting(link) {
+            window.open(link, '_blank');
+        }
+
+        // Show alerts
+        function showAlert(message, type = 'success') {
+            const alert = document.createElement('div');
+            alert.className = `toast fixed top-5 right-5 bg-${type === 'error' ? 'red' : 'green'}-500 text-white px-4 py-2 rounded-lg shadow-lg`;
+            alert.textContent = message;
+            document.body.appendChild(alert);
+            setTimeout(() => alert.remove(), 3000);
+        }
+
+        meetingForm.onsubmit = handleFormSubmit;
+
+        window.onload = loadScheduledMeetings;
+    </script>
+</body>
+</html>

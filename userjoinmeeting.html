@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDENT ERA || MY MEETINGS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <style>
+        .toast {
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 font-sans leading-relaxed tracking-wider">
+
+    <!-- Main Container with White Background -->
+    <div class="container mx-auto p-8 bg-white bg-opacity-90 rounded-lg shadow-lg mt-10">
+
+        <!-- Page Header -->
+        <div class="bg-white p-6 shadow-xl rounded-md mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Upcoming Meetings</h1>
+            <p class="text-gray-600 text-lg">Here are the upcoming meetings you can join. Click "Join Meeting" to attend any of them.</p>
+        </div>
+
+        <!-- Meetings Table -->
+        <div class="bg-white p-6 shadow-xl rounded-md">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Scheduled Meetings</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white rounded-lg shadow-md">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-gray-700">Topic</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-gray-700">Date</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-gray-700">Time</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-gray-700">Host</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-gray-700">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userMeetings" class="text-gray-700">
+                        <!-- Dynamic rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script to load meetings and join functionality -->
+    <script>
+        const userMeetingsDiv = document.getElementById('userMeetings');
+
+        // Load scheduled meetings for the user
+        async function loadUserMeetings() {
+            try {
+                const response = await fetch('http://localhost:5000/meetings');
+                const data = await response.json();
+                userMeetingsDiv.innerHTML = ''; // Clear current meetings
+
+                data.meetings.forEach(meeting => {
+                    const meetingRow = document.createElement('tr');
+                    meetingRow.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-50', 'transition', 'duration-200');
+
+                    meetingRow.innerHTML = `
+                        <td class="px-6 py-4">${meeting.topic}</td>
+                        <td class="px-6 py-4">${meeting.date}</td>
+                        <td class="px-6 py-4">${meeting.time}</td>
+                        <td class="px-6 py-4">${meeting.host}</td>
+                        <td class="px-6 py-4 text-center">
+                            <button onclick="joinMeeting('${meeting.link}')" class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200">
+                                <i class="fas fa-video mr-2"></i> Join Meeting
+                            </button>
+                        </td>
+                    `;
+
+                    userMeetingsDiv.appendChild(meetingRow);
+                });
+            } catch (error) {
+                console.error('Error loading user meetings:', error);
+            }
+        }
+
+        // Join a meeting by opening the meeting link
+        function joinMeeting(link) {
+            window.open(link, '_blank');
+        }
+
+        // Load meetings when the page loads
+        window.onload = loadUserMeetings;
+    </script>
+</body>
+</html>

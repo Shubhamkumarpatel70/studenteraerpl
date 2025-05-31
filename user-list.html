@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDENT ERA || USER LISTS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Basic CSS for table styling */
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        th, td {
+          padding: 10px;
+          text-align: left;
+          border: 1px solid #ddd;
+        }
+        th {
+          background-color: #4CAF50; /* Green background color */
+          color: white; /* White text */
+          padding: 10px; /* Padding for spacing */
+          text-align: left; /* Align text to the left */
+          font-weight: bold; /* Bold text */
+        }
+      
+        .loadbutton {
+          background-color: #2563eb; /* Blue background */
+          color: white; /* White text */
+          padding: 12px 24px; /* Padding for size */
+          border-radius: 8px; /* Rounded corners */
+          font-size: 16px; /* Font size */
+          font-weight: 600; /* Bold font */
+          transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+          border: none; /* Remove border */
+          cursor: pointer; /* Pointer on hover */
+          display: inline-flex; /* Align icon and text */
+          align-items: center; /* Align the items vertically */
+        }
+      
+        .loadbutton:hover {
+          background-color: #1d4ed8; /* Darker blue on hover */
+          transform: scale(1.05); /* Slightly enlarge button on hover */
+        }
+      
+        .loadbutton:focus {
+          outline: none; /* Remove default focus outline */
+          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Blue outline on focus */
+        }
+      
+        .loadbutton i {
+          font-size: 20px; /* Icon size */
+        }
+      
+        .text-2xl {
+          font-size: 1.5rem;
+        }
+      
+        .font-semibold {
+          font-weight: 600;
+        }
+      
+        table a {
+          text-decoration: none;
+          color: #1d4ed8; /* Tailwind blue color */
+        }
+      
+        table a:hover {
+          text-decoration: underline;
+          color: #2563eb; /* Darker blue when hovered */
+        }
+      
+        /* Style the card popup */
+        .popup-card {
+            display: none; /* Initially hidden */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 300px;
+            text-align: center;
+            z-index: 9999;
+            border-radius: 10px;
+        }
+      
+        .popup-card p {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+      
+        /* Background overlay */
+        .overlay {
+            display: none; /* Initially hidden */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+            backdrop-filter: blur(10px); /* Apply background blur */
+        }
+      
+        /* Style for button */
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+      
+        button:hover {
+            background-color: #45a049;
+        }
+      
+      </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-6">User List</h1>
+
+        <div class="mb-4">
+            <label for="filterRole" class="mr-2">Filter by Role:</label>
+            <select id="filterRole" class="p-2 border rounded-md">
+                <option value="">All</option>
+                <option value="user">User</option>
+                <option value="maintanance">Under Maintanance</option>
+                <option value="viewer">Viewer</option>
+                <option value="moderator">Moderator</option>
+                <option value="admin">Admin</option>
+                <option value="finance">Finance</option>
+            </select>
+        </div>
+
+        <table class="w-full table-auto border-collapse mb-6">
+            <thead>
+                <tr class="bg-blue-500 text-white">
+                    <th class="py-2 px-4 border">
+                        <input type="checkbox" id="selectAll" onclick="selectAllUsers()" />
+                    </th>
+                    <th class="py-2 px-4 border">Username</th>
+                    <th class="py-2 px-4 border">Email</th>
+                    <th class="py-2 px-4 border">Role</th>
+                    <th class="py-2 px-4 border">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="userTable">
+                <!-- Users will be populated here dynamically -->
+            </tbody>
+        </table>
+
+        <div class="text-center mb-4">
+            <button onclick="deleteSelectedUsers()" class="bg-red-500 text-white p-2 rounded-md hover:bg-red-600">Delete Selected Users</button>
+        </div>
+
+        <div class="text-center mb-4">
+            <label for="bulkAction" class="mr-2">Bulk Action:</label>
+            <select id="bulkAction" class="p-2 border rounded-md">
+                <option value="">Select Action</option>
+                <option value="user">User</option>
+                <option value="maintanance">Under Maintanance</option>
+                <option value="viewer">Viewer</option>
+                <option value="moderator">Moderator</option>
+                <option value="admin">Admin</option>
+                <option value="finance">Finance</option>
+            </select>
+            <button onclick="applyBulkAction()" class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 ml-2">Apply</button>
+        </div>
+
+        <div class="text-center">
+            <div class="loading hidden" id="loadingSpinner"></div>
+        </div>
+
+        <!-- Edit User Modal -->
+        <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                <h3 class="text-xl font-semibold mb-4">Edit User</h3>
+                <form id="editUserForm">
+                    <input type="text" id="editUsername" class="w-full p-3 mb-4 border rounded-md" placeholder="Username" required>
+                    <input type="email" id="editEmail" class="w-full p-3 mb-4 border rounded-md" placeholder="Email" required disabled>
+                    <select id="editRole" class="w-full p-3 mb-4 border rounded-md">
+                        <option  value="user">User</option>
+                        <option value="maintanance">Under Maintanance</option>
+                        <option value="viewer">Viewer</option>
+                        <option value="moderator">Moderator</option>
+                        <option value="admin">Admin</option>
+                        <option value="finance">Finance</option>
+                    </select>
+                    <button type="submit" class="w-full p-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">Update User</button>
+                    <button type="button" class="mt-2 w-full p-3 bg-gray-300 text-black rounded-md hover:bg-gray-400 transition" onclick="closeModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <p class="text-lg font-semibold">Are you sure you want to delete this user?</p>
+        <div class="flex justify-end mt-4">
+            <button onclick="document.getElementById('deleteModal').classList.add('hidden')" class="px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>
+            <button id="confirmDelete" class="px-4 py-2 bg-red-600 text-white rounded ml-2">Delete</button>
+        </div>
+    </div>
+</div>
+
+    <!-- Overlay for background -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Card-style Popup -->
+    <div class="popup-card" id="messageCard">
+        <p id="message"></p>
+    </div>
+
+  <script>
+    // Global function to show popup
+function showPopup(message) {
+    const overlay = document.getElementById('overlay');
+    const messageCard = document.getElementById('messageCard');
+    document.getElementById('message').innerText = message;
+    
+    overlay.style.display = 'block';
+    messageCard.style.display = 'block';
+    
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        messageCard.style.display = 'none';
+    }, 2000); // Hide after 2 seconds
+}
+
+// Fetch and display users
+async function fetchUsers() {
+    try {
+        const userTable = document.getElementById('userTable');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        loadingSpinner.classList.remove('hidden'); // Show loading spinner
+
+        const response = await fetch('http://localhost:5000/users');
+        if (!response.ok) throw new Error('Failed to fetch users');
+
+        const data = await response.json();
+        userTable.innerHTML = ''; // Clear the table before adding new data
+
+        data.users.forEach(user => {
+            const row = document.createElement('tr');
+            row.classList.add('text-center');
+            row.innerHTML = `
+                <td class="py-2 px-4 border">
+                    <input type="checkbox" class="user-checkbox" data-email="${user.email}" data-username="${user.username}" data-role="${user.role}" />
+                </td>
+                <td class="py-2 px-4 border">${user.username}</td>
+                <td class="py-2 px-4 border">${user.email}</td>
+                <td class="py-2 px-4 border">${user.role}</td>
+                <td class="py-2 px-4 border">
+                    <button class="bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600" onclick="openEditModal('${user.email}', '${user.username}', '${user.role}')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 mt-2" onclick="showDeleteConfirmation('${user.email}')">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                </td>
+            `;
+            userTable.appendChild(row);
+        });
+
+        loadingSpinner.classList.add('hidden'); // Hide loading spinner
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        showPopup('Error fetching users. Please try again.');
+    }
+}
+
+// Show delete confirmation modal
+function showDeleteConfirmation(email) {
+    const deleteModal = document.getElementById("deleteModal");
+    deleteModal.classList.remove("hidden");
+    document.getElementById("confirmDelete").onclick = function () {
+        deleteUser(email);
+    };
+}
+
+// Delete User
+async function deleteUser(email) {
+    try {
+        const response = await fetch('http://localhost:5000/delete-users', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ users: [email] })
+        });
+
+        if (!response.ok) throw new Error('Failed to delete user');
+
+        const data = await response.json();
+        showPopup(data.message || 'User deleted successfully.');
+        fetchUsers(); // Refresh user list
+
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        showPopup('Error deleting user. Please try again.');
+    } finally {
+        document.getElementById('deleteModal').classList.add('hidden');
+    }
+}
+
+// Delete selected users
+async function deleteSelectedUsers() {
+    const selectedUsers = Array.from(document.querySelectorAll('.user-checkbox:checked')).map(checkbox => checkbox.dataset.email);
+    
+    if (selectedUsers.length === 0) {
+        showPopup('No users selected.');
+        return;
+    }
+
+    if (confirm('Are you sure you want to delete the selected users?')) {
+        try {
+            const response = await fetch('http://localhost:5000/delete-users', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ users: selectedUsers })
+            });
+
+            if (!response.ok) throw new Error('Failed to delete users');
+
+            const data = await response.json();
+            showPopup(data.message || 'Users deleted successfully.');
+            fetchUsers(); // Refresh user list
+
+        } catch (error) {
+            console.error('Error deleting users:', error);
+            showPopup('Error deleting users. Please try again.');
+        }
+    }
+}
+
+// Open the edit modal with user data
+function openEditModal(email, username, role) {
+    document.getElementById('editEmail').value = email;
+    document.getElementById('editUsername').value = username;
+    document.getElementById('editRole').value = role;
+    document.getElementById('editModal').classList.remove('hidden');
+}
+
+// Close modal
+function closeModal() {
+    document.getElementById('editModal').classList.add('hidden');
+}
+
+// Handle user edit
+document.getElementById('editUserForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const email = document.getElementById('editEmail').value;
+    const username = document.getElementById('editUsername').value;
+    const role = document.getElementById('editRole').value;
+
+    try {
+        const response = await fetch('http://localhost:5000/edit-user', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, username, role }),
+        });
+
+        const data = await response.json();
+        showPopup(data.message);
+
+        if (response.ok) {
+            closeModal();
+            fetchUsers(); // Refresh user list
+        }
+    } catch (error) {
+        console.error('Error updating user:', error);
+        showPopup('An error occurred. Please try again.');
+    }
+});
+
+// Select all users except admin
+function selectAllUsers() {
+    const checkboxes = document.querySelectorAll('.user-checkbox');
+    const selectAllCheckbox = document.getElementById('selectAll');
+    checkboxes.forEach(checkbox => {
+        if (checkbox.dataset.role !== 'admin') {
+            checkbox.checked = selectAllCheckbox.checked;
+        }
+    });
+}
+
+// Filter users by role
+document.getElementById('filterRole').addEventListener('change', function () {
+    const selectedRole = this.value;
+    document.querySelectorAll('#userTable tr').forEach(row => {
+        const role = row.querySelector('td:nth-child(4)').innerText;
+        row.style.display = (selectedRole === '' || role === selectedRole) ? '' : 'none';
+    });
+});
+
+// Fetch users when the page loads
+window.onload = fetchUsers;
+
+  </script>
+</body>
+</html>

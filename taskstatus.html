@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Student Status</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            font-size: 16px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .loading {
+            text-align: center;
+            color: #333;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .loading span {
+            animation: blink 1s infinite step-start;
+        }
+
+        @keyframes blink {
+            50% {
+                color: transparent;
+            }
+        }
+
+        /* Dropdown container */
+        .dropdown-container {
+            position: relative;
+        }
+
+        .dropdown {
+            display: none;
+            position: absolute;
+            background-color: white;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .dropdown div {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown div:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="form-container">
+        <h2>Update Student Status</h2>
+
+        <form id="studentStatusForm">
+            <label for="studentSearch">Search Student ID:</label>
+            <input type="text" id="studentSearch" placeholder="Type to search..." autocomplete="off">
+            
+            <div class="dropdown-container">
+                <div class="dropdown" id="studentDropdown"></div>
+            </div>
+
+            <label for="status">Status:</label>
+            <select id="status" required>
+                <option selected value="" disabled>Select a Status</option>
+                <option value="complete">Complete</option>
+                <option value="incomplete">Incomplete</option>
+            </select>
+
+            <button type="submit">Submit</button>
+
+            <div class="loading"><span>Submitting...</span></div>
+            <p id="message" class="message"></p>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const studentSearch = document.getElementById("studentSearch");
+            const studentDropdown = document.getElementById("studentDropdown");
+            let studentList = [];
+
+            // Fetch student IDs from the backend
+            fetch('http://localhost:5000/generatedstudentidofregisteredstudentatstudenterastudentid')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.students && data.students.length > 0) {
+                        studentList = data.students;
+                    } else {
+                        studentList = [];
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching students:", error);
+                    studentList = [];
+                });
+
+            // Search functionality
+            studentSearch.addEventListener("input", () => {
+                const query = studentSearch.value.toLowerCase();
+                studentDropdown.innerHTML = "";
+                studentDropdown.style.display = "none";
+
+                if (query.length > 0) {
+                    const filteredStudents = studentList.filter(studentId => studentId.toLowerCase().includes(query));
+                    
+                    if (filteredStudents.length > 0) {
+                        filteredStudents.forEach(studentId => {
+                            const div = document.createElement("div");
+                            div.textContent = studentId;
+                            div.onclick = () => {
+                                studentSearch.value = studentId;
+                                studentDropdown.style.display = "none";
+                            };
+                            studentDropdown.appendChild(div);
+                        });
+                        studentDropdown.style.display = "block";
+                    } else {
+                        studentDropdown.innerHTML = "<div>No students found</div>";
+                        studentDropdown.style.display = "block";
+                    }
+                }
+            });
+
+            // Handle form submission
+            document.getElementById("studentStatusForm").addEventListener("submit", function (event) {
+                event.preventDefault();  // Prevent form submission
+
+                const studentId = studentSearch.value.trim();
+                const status = document.getElementById("status").value;
+                const messageElement = document.getElementById("message");
+                const loadingElement = document.querySelector(".loading");
+
+                // Clear previous messages
+                messageElement.classList.remove('error', 'success');
+                messageElement.innerText = "";
+
+                if (!studentList.includes(studentId)) {
+                    messageElement.classList.add('error');
+                    messageElement.innerText = "Invalid Student ID. Please select from the list.";
+                    return;
+                }
+
+                if (!status) {
+                    messageElement.classList.add('error');
+                    messageElement.innerText = "Please select a Status.";
+                    return;
+                }
+
+                // Show loading indicator
+                loadingElement.style.display = 'block';
+
+                // Send data to the backend
+                fetch('http://localhost:5000/update-student-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ studentId, status })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        loadingElement.style.display = 'none';
+
+                        if (data.message && data.message.includes("updated")) {
+                            messageElement.classList.add('success');
+                            messageElement.innerText = `Status for Student ID ${studentId} updated successfully!`;
+                        } else {
+                            messageElement.classList.add('error');
+                            messageElement.innerText = `Error updating status: ${data.message || 'Unknown error'}`;
+                        }
+                    })
+                    .catch(error => {
+                        loadingElement.style.display = 'none';
+                        messageElement.classList.add('error');
+                        messageElement.innerText = "An error occurred. Please try again.";
+                        console.error("Error:", error);
+                    });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

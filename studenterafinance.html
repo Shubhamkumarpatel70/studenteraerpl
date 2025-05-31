@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STUDENT ERA || FINANCE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <style>
+    /* Basic CSS for table styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #4CAF50; /* Green background color */
+      color: white; /* White text */
+      padding: 10px; /* Padding for spacing */
+      text-align: left; /* Align text to the left */
+      font-weight: bold; /* Bold text */
+    }
+  
+    .loadbutton {
+      background-color: #2563eb; /* Blue background */
+      color: white; /* White text */
+      padding: 12px 24px; /* Padding for size */
+      border-radius: 8px; /* Rounded corners */
+      font-size: 16px; /* Font size */
+      font-weight: 600; /* Bold font */
+      transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+      border: none; /* Remove border */
+      cursor: pointer; /* Pointer on hover */
+      display: inline-flex; /* Align icon and text */
+      align-items: center; /* Align the items vertically */
+    }
+  
+    .loadbutton:hover {
+      background-color: #1d4ed8; /* Darker blue on hover */
+      transform: scale(1.05); /* Slightly enlarge button on hover */
+    }
+  
+    .loadbutton:focus {
+      outline: none; /* Remove default focus outline */
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Blue outline on focus */
+    }
+  
+    .loadbutton i {
+      font-size: 20px; /* Icon size */
+    }
+  
+    .text-2xl {
+      font-size: 1.5rem;
+    }
+  
+    .font-semibold {
+      font-weight: 600;
+    }
+  
+    table a {
+      text-decoration: none;
+      color: #1d4ed8; /* Tailwind blue color */
+    }
+  
+    table a:hover {
+      text-decoration: underline;
+      color: #2563eb; /* Darker blue when hovered */
+    }
+  
+    /* Style the card popup */
+    .popup-card {
+        display: none; /* Initially hidden */
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        max-width: 300px;
+        text-align: center;
+        z-index: 9999;
+        border-radius: 10px;
+    }
+  
+    .popup-card p {
+        margin: 0;
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
+  
+    /* Background overlay */
+    .overlay {
+        display: none; /* Initially hidden */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9998;
+        backdrop-filter: blur(10px); /* Apply background blur */
+    }
+  
+    /* Style for button */
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+  
+    button:hover {
+        background-color: #45a049;
+    }
+  
+  </style>
+</head>
+<body class="font-sans bg-gray-100">
+
+  <!-- Sidebar -->
+  <div class="flex">
+
+<!-- Left Sidebar -->
+<div id="sidebar" class="w-72 bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900 text-white h-screen p-6 space-y-6 transition-all duration-300 ease-in-out fixed left-0 top-0 -translate-x-full lg:translate-x-0 z-50 overflow-y-auto">
+  <div class="flex justify-between items-center mb-6">
+    <!-- Hamburger Icon for mobile inside sidebar (hidden by default) -->
+    <button id="menuToggle" class="lg:hidden text-3xl text-white focus:outline-none">
+      <i id="menuIcon" class="fas fa-bars"></i> <!-- FontAwesome Hamburger Icon -->
+    </button>
+    <div class="text-3xl font-semibold text-center tracking-wider uppercase">Student Era</div>
+  </div>
+
+  <div>
+    <ul class="space-y-5">
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="dashboardLink">
+          <i class="fas fa-tachometer-alt mr-5 text-2xl"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="newRegistrationLink">
+          <i class="fas fa-user-plus mr-5 text-2xl"></i>
+          <span>New Registration</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="attendMeetingLink">
+          <i class="fas fa-video mr-5 text-2xl"></i>
+          <span>Attend Meeting</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="paymentviewLink">
+          <i class="fas fa-credit-card mr-5 text-2xl"></i>
+          <span>Payment View</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="https://studentera.tech/" target="_blank" rel="noopener noreferrer" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200">
+          <i class="fas fa-external-link-alt mr-5 text-2xl"></i>
+          <span>Visit Website</span>
+        </a>
+      </li>
+      <li class="mt-8">
+        <button class="w-full py-3 px-5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all ease-in-out duration-200 flex items-center justify-center" onclick="logout()">
+          <i class="fas fa-sign-out-alt mr-3 text-xl"></i>
+          <span>Logout</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+    <!-- Main Content Area -->
+    <div class="flex-1 p-6 bg-gray-100 ml-0 lg:ml-64">
+      
+<!-- Top Navigation Bar -->
+<div class="flex justify-between items-center bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-4 rounded-lg shadow-md mb-6">
+  <div class="flex items-center space-x-6">
+    <!-- Hamburger Icon for mobile (this will be aligned to the right when sidebar is open) -->
+    <button id="menuToggleTop" class="lg:hidden text-3xl text-white hover:text-gray-300 focus:outline-none">
+      <i id="topMenuIcon" class="fas fa-bars"></i> <!-- FontAwesome Hamburger Icon -->
+    </button>
+    <div class="text-2xl font-semibold text-white tracking-wide">Finance Dashboard</div>
+  </div>
+
+  <!-- Greeting message and user avatar -->
+  <div class="flex items-center space-x-6"> 
+    <div id="greetingMessage" class="text-lg font-medium text-white">Welcome, User</div>
+    <!-- Avatar with dynamic background effect -->
+    <div id="avatarContainer" class="rounded-full w-16 h-16 border-2 border-white p-1 cursor-pointer hover:scale-110 transform transition-all duration-300 border-gradient">
+      <img src="project-folder/images/logo.jpg" alt="Avatar" class="rounded-full w-full h-full object-cover">
+    </div>
+  </div>
+</div>
+
+ <!-- Content Sections -->
+<div id="dashboardContent" class="content-section py-6 px-4 bg-gray-50">
+  <!-- Dashboard Content -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+<!-- Card 1: Total Students -->
+<div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">Total Students</div> <!-- Title in white for high contrast -->
+  <div id="totalStudentsCount" class="text-5xl text-yellow-400 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in yellow for prominence -->
+</div>
+
+
+<!-- Card 2: New Registrations -->
+<div class="bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">New Registrations</div> <!-- Title in white for high contrast -->
+  <div id="newRegistrationsCount" class="text-5xl text-yellow-400 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in yellow for prominence -->
+</div>
+
+
+<!-- Card 3: Generated Certificate -->
+<div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">Generated Certificate</div> <!-- Title in white for high contrast -->
+  <div id="certificategeneratedCount" class="text-5xl text-yellow-400 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in yellow for visibility -->
+</div>
+
+
+<!-- Card 4: Apply for Internships -->
+<div class="bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">Apply for Internships</div> <!-- Title in white for contrast -->
+  <div id="appliedInternshipsCount" class="text-5xl text-yellow-400 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in orange for vibrancy -->
+</div>
+
+
+    <!-- Card 5: Queries/Contact -->
+<div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">Queries/Contact</div> <!-- Title in white for contrast -->
+  <div id="queriesCount" class="text-5xl text-yellow-300 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in yellow for prominence -->
+</div>
+
+  
+  </div>
+</div>
+
+<div id="newRegistrationContent" class="content-section hidden">
+  <!-- New Registration Content -->
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <div class="flex justify-between items-center">
+      <div class="text-2xl font-semibold text-gray-700">New Registration Form</div>
+      <button class="loadbutton" onclick="fetchData('newRegistration')">
+        <i class="fas fa-file-import mr-2"></i> Load Data
+      </button>
+    </div>
+
+    <!-- Search Input for Student ID -->
+    <div class="flex mb-4">
+      <div class="relative w-full max-w-md">
+        <input type="text" id="searchNewRegistrationStudentId" class="p-2 border border-gray-300 rounded-l-lg w-full pr-12" placeholder="Enter Student ID to Search">
+        <button class="absolute right-0 top-0 bottom-0 p-2 bg-blue-500 text-white rounded-r-lg" onclick="searchStudentId()">Search</button>
+      </div>
+      <div id="newRegistrationSearchErrorMessage" class="text-red-500 mt-2 hidden">
+        Student ID not found.
+      </div>
+    </div>
+    
+    <!-- New Registration Table to display the data -->
+    <table id="newRegistrationTable" class="min-w-full bg-white border border-gray-200">
+      <thead class="bg-gray-100 border-b">
+        <tr>
+          <th class="py-2 px-4">DOR</th>
+          <th class="py-2 px-4">Payment Image</th>
+          <th class="py-2 px-4">Full Name</th>
+          <th class="py-2 px-4">Mobile</th>
+          <th class="py-2 px-4">Student ID</th>
+          <th class="py-2 px-4">Email</th>
+          <th class="py-2 px-4">College</th>
+          <th class="py-2 px-4">Branch</th>
+          <th class="py-2 px-4">Academic Year</th>
+          <th class="py-2 px-4">Internship Domain</th>
+          <th class="py-2 px-4">Internship Duration</th>
+          <th class="py-2 px-4">Payment Option</th>
+          <th class="py-2 px-4">Transaction ID</th>
+          <th class="py-2 px-4">Referral-ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data rows for New Registration will go here -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<div id="attendMeetingContent" class="content-section hidden">
+  <!-- Send Confirmation Notification Section -->
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold text-gray-700 mb-4">Join Online Meetings</h2>
+    
+    <!-- Option 1: Embed the external site -->
+    <div class="mt-4">
+      <iframe 
+        src="userjoinmeeting.html" 
+        class="w-full h-96 border border-gray-300 rounded-md shadow-md" 
+        title="Send Notification" 
+        loading="lazy" 
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups" 
+        aria-label="Send Notification Embedded Page">
+      </iframe>
+    </div>
+    
+    <!-- Divider -->
+    <div class="my-6 border-t border-gray-200"></div>
+
+  </div>
+</div>
+
+<div id="paymentviewContent" class="content-section hidden">
+  <!-- Payment Details -->
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-4">
+      <div class="text-2xl font-semibold text-gray-700">Payment Details</div>
+      <button class="loadbutton" onclick="fetchData('paymentView')">
+        <i class="fas fa-file-import mr-2"></i> Load Data
+      </button>
+    </div>
+
+    <!-- Search Input for Student ID -->
+    <div class="flex mb-4">
+      <div class="relative w-full max-w-md">
+        <input type="text" id="searchPaymentViewQuery" class="p-2 border border-gray-300 rounded-l-lg w-full pr-12" placeholder="Enter Student ID to Search">
+        <button class="absolute right-0 top-0 bottom-0 p-2 bg-blue-500 text-white rounded-r-lg" onclick="searchPaymentViewQuery()">Search</button>
+      </div>
+    </div>
+
+    <!-- Error Message for No Results -->
+    <div id="searchPaymentViewErrorMessage" class="text-red-500 mt-2 hidden">
+      No queries found.
+    </div>
+
+    <!-- Payment Details Table -->
+    <table id="paymentViewTable" class="table-auto w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="px-4 py-2 border">Date of Payment</th>
+          <th class="px-4 py-2 border">Payment Image</th>
+          <th class="px-4 py-2 border">Student Id</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data rows will go here dynamically -->
+      </tbody>
+    </table>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+      <!-- Overlay for background -->
+      <div class="overlay" id="overlay"></div>
+
+      <div class="popup-card" id="messageCard">
+          <p id="message"></p>
+      </div>
+  <!-- Mobile Responsiveness and Sidebar Toggle -->
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const menuToggleTop = document.getElementById('menuToggleTop');
+    const sidebar = document.getElementById('sidebar');
+    const body = document.querySelector('body');
+    const menuIcon = document.getElementById('menuIcon');
+    const topMenuIcon = document.getElementById('topMenuIcon');
+
+    // For toggling the sidebar
+    function toggleSidebar() {
+      sidebar.classList.toggle('-translate-x-full');
+      sidebar.classList.toggle('translate-x-0');
+      body.classList.toggle('overflow-hidden'); // Prevent scrolling when sidebar is open
+
+      // Toggle the menu icon between bars and cross
+      if (sidebar.classList.contains('translate-x-0')) {
+        menuIcon.classList.replace('fa-bars', 'fa-times'); // Change to X when sidebar is open
+        topMenuIcon.classList.replace('fa-bars', 'fa-times'); // Change to X on top bar
+      } else {
+        menuIcon.classList.replace('fa-times', 'fa-bars'); // Change back to bars when sidebar is closed
+        topMenuIcon.classList.replace('fa-times', 'fa-bars'); // Change back to bars on top bar
+      }
+    }
+
+    menuToggle.addEventListener('click', toggleSidebar);
+    menuToggleTop.addEventListener('click', toggleSidebar);
+
+    // Toggle visibility of content sections
+    const dashboardLink = document.getElementById('dashboardLink');
+    const newRegistrationLink = document.getElementById('newRegistrationLink');
+    const attendMeetingLink = document.getElementById('attendMeetingLink');  
+    const paymentviewLink = document.getElementById('paymentviewLink');
+
+    const dashboardContent = document.getElementById('dashboardContent');
+    const newRegistrationContent = document.getElementById('newRegistrationContent');
+    const attendMeetingLinkContent = document.getElementById('attendMeetingLinkContent');  
+    const paymentviewContent = document.getElementById('paymentviewContent');
+
+    // Function to hide all content sections
+    function hideAllSections() {
+      dashboardContent.classList.add('hidden');
+      newRegistrationContent.classList.add('hidden');
+      attendMeetingContent.classList.add('hidden'); 
+      paymentviewContent.classList.add('hidden');
+    }
+
+    // Event listeners for sidebar links to show corresponding content
+    dashboardLink.addEventListener('click', () => {
+      hideAllSections();
+      dashboardContent.classList.remove('hidden');
+    });
+
+    newRegistrationLink.addEventListener('click', () => {
+      hideAllSections();
+      newRegistrationContent.classList.remove('hidden');
+    });
+
+    attendMeetingLink.addEventListener('click', () => {
+      hideAllSections();
+      attendMeetingContent.classList.remove('hidden');
+    });
+
+    paymentviewLink.addEventListener('click', () => {
+      hideAllSections();
+      paymentviewContent.classList.remove('hidden');
+    });
+  </script>
+<script>
+  // Function to show a specific section
+  function showSection(sectionId) {
+    // Hide all sections
+    document.querySelectorAll('.content-section').forEach((section) => {
+      section.classList.add('hidden');
+    });
+
+    // Show the selected section
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.classList.remove('hidden');
+    } else {
+      console.error('Section not found:', sectionId);
+    }
+  }
+
+  // URLs of CSV files for each section
+  const dataUrls = {
+    newRegistration: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRGRsVHf_IQ3MhieEiJL34Shz4i3xLaK-CzxmX53Qtx8Uk7n7_FmyyVQNLofWl9bvVAG3N7XH7WDj1/pub?output=csv',
+    paymentView: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRGRsVHf_IQ3MhieEiJL34Shz4i3xLaK-CzxmX53Qtx8Uk7n7_FmyyVQNLofWl9bvVAG3N7XH7WDj1/pub?output=csv',
+  };
+
+  // Fetch data for a specific section
+  function fetchData(section) {
+    const url = dataUrls[section];
+    if (!url) {
+      console.error('Invalid section:', section);
+      return;
+    }
+
+    fetch(url)
+      .then((response) => response.text())
+      .then((data) => {
+        populateTable(data, `${section}Table`, section);
+      })
+      .catch((error) => {
+        console.error(`Error fetching data for ${section}:`, error);
+      });
+  }
+
+  // Populate data into the appropriate table
+  function populateTable(csvData, tableId, section) {
+    const rows = csvData.split('\n');
+    const tableBody = document.querySelector(`#${tableId} tbody`);
+    tableBody.innerHTML = ''; // Clear previous data
+
+    rows.forEach((row, index) => {
+      if (index === 0) return; // Skip header row
+      const cells = row.split(',').map(cell => cell.trim()); // Clean up cells
+
+      const tableRow = document.createElement('tr');
+
+      cells.forEach((cell, cellIndex) => {
+        if (section === 'paymentView' && ![0, 1, 4].includes(cellIndex)) return; // Only include DOR, Payment Image, and Student ID for paymentView
+
+        const tableCell = document.createElement('td');
+        const cellData = cell;
+
+        // If the cell contains a URL, make it clickable and add an icon
+        if (cellData && cellData.startsWith('http')) {
+          const link = document.createElement('a');
+          link.href = cellData;
+          link.target = '_blank'; // Open in new tab
+
+          if ((tableId === 'newRegistrationTable' || tableId === 'paymentViewTable') && cellIndex === 1) {
+            // For payment image, show 'View' icon
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-eye mr-2';  // Font Awesome 'View' icon with margin
+            link.appendChild(icon);
+            link.appendChild(document.createTextNode(' View'));
+          }
+
+          tableCell.appendChild(link);
+        } else {
+          tableCell.textContent = cellData || '-';  // If the link is missing, show a hyphen
+        }
+
+        tableCell.className = 'px-4 py-2 border';
+        tableRow.appendChild(tableCell);
+      });
+
+      tableBody.appendChild(tableRow);
+    });
+  }
+
+  // Function to search Student ID and highlight matching row
+  function searchStudentId() {
+    const studentId = document.getElementById('searchNewRegistrationStudentId').value.trim();
+
+    if (!studentId) {
+      alert("Please enter a student ID to search.");
+      return;
+    }
+
+    const table = document.getElementById('newRegistrationTable');
+    const rows = table.getElementsByTagName('tr');
+    let found = false;
+
+    // Loop through all rows, excluding the header
+    for (let i = 1; i < rows.length; i++) {
+      const cells = rows[i].getElementsByTagName('td');
+      const currentStudentId = cells[4] ? cells[4].textContent.trim() : ''; // Assuming Student ID is in the 5th column (index 4)
+
+      // Check if the student ID matches
+      if (currentStudentId === studentId) {
+        rows[i].classList.add('bg-yellow-100'); // Highlight the row in yellow
+        found = true;
+      } else {
+        rows[i].classList.remove('bg-yellow-100'); // Remove highlighting if no match
+      }
+    }
+
+    // Show error message if not found
+    const errorMessage = document.getElementById('newRegistrationSearchErrorMessage');
+    if (!found) {
+      errorMessage.classList.remove('hidden'); // Show the error message
+    } else {
+      errorMessage.classList.add('hidden'); // Hide the error message
+    }
+  }
+
+  function searchPaymentViewQuery() {
+    const studentId = document.getElementById('searchPaymentViewQuery').value.trim();
+
+    if (!studentId) {
+      alert("Please enter a student ID to search.");
+      return;
+    }
+
+    const table = document.getElementById('paymentViewTable');
+    const rows = table.getElementsByTagName('tr');
+    let found = false;
+
+    // Loop through all rows, excluding the header
+    for (let i = 1; i < rows.length; i++) {
+      const cells = rows[i].getElementsByTagName('td');
+      const currentStudentId = cells[2] ? cells[2].textContent.trim() : ''; // Assuming Student ID is in the 3rd column (index 2)
+
+      // Check if the student ID matches
+      if (currentStudentId === studentId) {
+        rows[i].classList.add('bg-yellow-100'); // Highlight the row in yellow
+        found = true;
+      } else {
+        rows[i].classList.remove('bg-yellow-100'); // Remove highlighting if no match
+      }
+    }
+
+    // Show error message if not found
+    const errorMessage = document.getElementById('searchPaymentViewErrorMessage');
+    if (!found) {
+      errorMessage.classList.remove('hidden'); // Show the error message
+    } else {
+      errorMessage.classList.add('hidden'); // Hide the error message
+    }
+  }
+
+  // Other search functions remain unchanged
+</script>
+  
+<script>
+  // Function to display the greeting message with the user's name and change avatar background color
+  function displayGreeting() {
+      const username = localStorage.getItem('username');  // Retrieve username from localStorage
+
+      // Get the current hour
+      const currentHour = new Date().getHours();
+      let timeOfDay, avatarColor;
+
+      // Determine the time of day based on the current hour
+      if (currentHour >= 5 && currentHour < 12) {
+          timeOfDay = 'Good Morning';
+          avatarColor = 'bg-yellow-400';  // Morning color (yellow)
+      } else if (currentHour >= 12 && currentHour < 18) {
+          timeOfDay = 'Good Afternoon';
+          avatarColor = 'bg-orange-400';  // Afternoon color (orange)
+      } else if (currentHour >= 18 && currentHour < 21) {
+          timeOfDay = 'Good Evening';
+          avatarColor = 'bg-blue-400';  // Evening color (blue)
+      } else {
+          timeOfDay = 'Good Night';
+          avatarColor = 'bg-indigo-400';  // Night color (indigo)
+      }
+
+      // Display the greeting with the user's name or a generic greeting
+      const greetingMessage = document.getElementById('greetingMessage');
+      const avatarContainer = document.getElementById('avatarContainer');
+
+      if (username) {
+          greetingMessage.textContent = `${timeOfDay}, ${username}!`;
+      } else {
+          greetingMessage.textContent = 'Hello, Dear!';
+      }
+
+      // Remove any existing background colors from avatar container
+      avatarContainer.classList.remove('bg-yellow-400', 'bg-orange-400', 'bg-blue-400', 'bg-indigo-400');
+      
+      // Add the new background color class
+      avatarContainer.classList.add(avatarColor);
+  }
+
+  // Global function to show popup
+  function showPopup(message) {
+      document.getElementById('message').innerText = message;
+      const overlay = document.getElementById('overlay');
+      const messageCard = document.getElementById('messageCard');
+      overlay.style.display = 'flex';
+      messageCard.style.display = 'block';
+      setTimeout(() => {
+          overlay.style.display = 'none';
+          messageCard.style.display = 'none';
+      }, 1000); // Hide after 5 seconds
+  }
+
+  // Check if the user is logged in and if their role is 'admin'
+  window.onload = function () {
+      const userRole = localStorage.getItem('role'); // Get the role from localStorage
+
+      // If no user is logged in or the role is not 'admin', redirect to the login page
+      if (!userRole || userRole !== 'finance') {
+          showPopup('You are not authorized to access this page. Redirecting to login...');
+          setTimeout(() => {
+              window.location.href = 'index.html'; // Redirect to login page
+          }, 3000);
+      } else {
+          showPopup('You are successfully logged in as an Finance! Please Wait ...');
+      }
+
+      // Display the greeting message
+      displayGreeting();
+  };
+
+  // Logout function
+  function logout() {
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('username');
+      localStorage.removeItem('role');
+      window.location.href = 'index.html'; // Redirect to login page after logout
+  }
+</script>
+<script src="script.js"></script>
+  <script src="project-folder/script.js"></script>
+</body>
+</html>

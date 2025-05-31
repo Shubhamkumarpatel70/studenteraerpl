@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STUDENT ERA || ADMIN PANNEL</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <!-- Include XLSX library before your script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+  /* Basic CSS for table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  th {
+    background-color: #4CAF50; /* Green background color */
+    color: white; /* White text */
+    padding: 10px; /* Padding for spacing */
+    text-align: left; /* Align text to the left */
+    font-weight: bold; /* Bold text */
+  }
+
+  .loadbutton {
+    background-color: #2563eb; /* Blue background */
+    color: white; /* White text */
+    padding: 12px 24px; /* Padding for size */
+    border-radius: 8px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+    font-weight: 600; /* Bold font */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+    border: none; /* Remove border */
+    cursor: pointer; /* Pointer on hover */
+    display: inline-flex; /* Align icon and text */
+    align-items: center; /* Align the items vertically */
+  }
+
+  .loadbutton:hover {
+    background-color: #1d4ed8; /* Darker blue on hover */
+    transform: scale(1.05); /* Slightly enlarge button on hover */
+  }
+
+  .loadbutton:focus {
+    outline: none; /* Remove default focus outline */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Blue outline on focus */
+  }
+
+  .loadbutton i {
+    font-size: 20px; /* Icon size */
+  }
+
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+
+  .font-semibold {
+    font-weight: 600;
+  }
+
+  table a {
+    text-decoration: none;
+    color: #1d4ed8; /* Tailwind blue color */
+  }
+
+  table a:hover {
+    text-decoration: underline;
+    color: #2563eb; /* Darker blue when hovered */
+  }
+
+  /* Style the card popup */
+  .popup-card {
+      display: none; /* Initially hidden */
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      max-width: 300px;
+      text-align: center;
+      z-index: 9999;
+      border-radius: 10px;
+  }
+
+  .popup-card p {
+      margin: 0;
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+  }
+
+  /* Background overlay */
+  .overlay {
+      display: none; /* Initially hidden */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+      backdrop-filter: blur(10px); /* Apply background blur */
+  }
+
+  /* Style for button */
+  button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+
+  button:hover {
+      background-color: #45a049;
+  }
+
+</style>
+
+</head>
+<body class="font-sans bg-gray-100">
+
+
+  <!-- Sidebar -->
+  <div class="flex">
+
+<!-- Left Sidebar -->
+<div id="sidebar" class="w-72 bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900 text-white h-screen p-6 space-y-6 transition-all duration-300 ease-in-out fixed left-0 top-0 -translate-x-full lg:translate-x-0 z-50 overflow-y-auto">
+  <div class="flex justify-between items-center mb-6">
+    <!-- Hamburger Icon for mobile inside sidebar (hidden by default) -->
+    <button id="menuToggle" class="lg:hidden text-3xl text-white focus:outline-none">
+      <i id="menuIcon" class="fas fa-bars"></i> <!-- FontAwesome Hamburger Icon -->
+    </button>
+    <div class="text-3xl font-semibold text-center tracking-wider uppercase">Student Era</div>
+  </div>
+
+  <div>
+    <ul class="space-y-5">
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="dashboardLink">
+          <i class="fas fa-tachometer-alt mr-5 text-2xl"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="newRegistrationLink">
+          <i class="fas fa-user-plus mr-5 text-2xl"></i>
+          <span>New Registration</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="internshipRegistrationLink">
+          <i class="fas fa-clipboard-list mr-5 text-2xl"></i>
+          <span>Internship Domain Registration</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="certificateVerificationLink">
+          <i class="fas fa-certificate mr-5 text-2xl"></i>
+          <span>Certificate Verification</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="userfetchLink">
+          <i class="fas fa-search mr-5 text-2xl"></i>
+          <span>User Fetch Projects</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="useruploadtaskLink">
+          <i class="fas fa-upload mr-5 text-2xl"></i>
+          <span>User Uploaded Tasks</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="usergeneratedcertificateLink">
+          <i class="fas fa-certificate mr-5 text-2xl"></i>
+          <span>User Generated Certificate</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="feedbackdetailsLink">
+          <i class="fas fa-comment-dots mr-5 text-2xl"></i>
+          <span>Feedback Details</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="sentconfirmationLink">
+          <i class="fas fa-paper-plane mr-5 text-2xl"></i>
+          <span>Sent Confirmation Notification</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="sendconfirmationLink">
+          <i class="fas fa-bell mr-5 text-2xl"></i>
+          <span>Send Confirmation Notification</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="generateconfirmationLink">
+          <i class="fas fa-file-signature mr-5 text-2xl"></i>
+          <span>Sent Offer Letter</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="sendofferletterLink">
+          <i class="fas fa-envelope-open-text mr-5 text-2xl"></i>
+          <span>Send Offer Letter</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="sendreminderLink">
+          <i class="fas fa-clock mr-5 text-2xl"></i>
+          <span>Send Reminder</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="adminapplyLink">
+          <i class="fas fa-user mr-5 text-2xl"></i>
+          <span>Staff Role</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="onlineMeetingLink">
+          <i class="fas fa-video mr-5 text-2xl"></i>
+          <span>Meetings</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="contactusLink">
+          <i class="fas fa-phone-alt mr-5 text-2xl"></i>
+          <span>Contact Us</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="#" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200" id="studentworkLink">
+          <i class="fas fa-user-graduate mr-5 text-2xl"></i>  
+          <span>Student Work</span>
+        </a>
+      </li>      
+
+      <li>
+        <a href="https://studentera.tech/" target="_blank" rel="noopener noreferrer" class="flex items-center py-3 px-5 text-lg font-medium rounded-lg hover:bg-blue-600 hover:text-white transition-all ease-in-out duration-200">
+          <i class="fas fa-external-link-alt mr-5 text-2xl"></i>
+          <span>Visit Website</span>
+        </a>
+      </li>
+      <li class="mt-8">
+        <button class="w-full py-3 px-5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all ease-in-out duration-200 flex items-center justify-center" onclick="logout()">
+          <i class="fas fa-sign-out-alt mr-3 text-xl"></i>
+          <span>Logout</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 p-6 bg-gray-100 ml-0 lg:ml-64">
+      
+<!-- Top Navigation Bar -->
+<div class="flex justify-between items-center bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-4 rounded-lg shadow-md mb-6">
+  <div class="flex items-center space-x-6">
+    <!-- Hamburger Icon for mobile (this will be aligned to the right when sidebar is open) -->
+    <button id="menuToggleTop" class="lg:hidden text-3xl text-white hover:text-gray-300 focus:outline-none">
+      <i id="topMenuIcon" class="fas fa-bars"></i> <!-- FontAwesome Hamburger Icon -->
+    </button>
+    <div class="text-2xl font-semibold text-white tracking-wide">Admin Dashboard</div>
+  </div>
+
+  <!-- Greeting message and user avatar -->
+  <div class="flex items-center space-x-6"> 
+    <div id="greetingMessage" class="text-lg font-medium text-white">Welcome, User</div>
+    <!-- Avatar with dynamic background effect -->
+    <div id="avatarContainer" class="rounded-full w-16 h-16 border-2 border-white p-1 cursor-pointer hover:scale-110 transform transition-all duration-300 border-gradient">
+      <img src="project-folder/images/logo.jpg" alt="Avatar" class="rounded-full w-full h-full object-cover">
+    </div>
+  </div>
+</div>
+
+   <!-- Content Sections -->
+<div id="dashboardContent" class="content-section py-6 px-4 bg-gray-50">
+  <!-- Dashboard Content -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+<!-- Card 1: Total Students -->
+<div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">Total Students</div> <!-- Title in white for high contrast -->
+  <div id="totalStudentsCount" class="text-5xl text-yellow-400 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in yellow for prominence -->
+</div>
+
+
+<!-- Card 2: New Registrations -->
+<div class="bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">New Registrations</div> <!-- Title in white for high contrast -->
+  <div id="newRegistrationsCount" class="text-5xl text-yellow-400 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in yellow for prominence -->
+</div>
+
+
+<!-- Card 3: Generated Certificate -->
+<div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">Generated Certificate</div> <!-- Title in white for high contrast -->
+  <div id="certificategeneratedCount" class="text-5xl text-yellow-400 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in yellow for visibility -->
+</div>
+
+
+<!-- Card 4: Apply for Internships -->
+<div class="bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">Apply for Internships</div> <!-- Title in white for contrast -->
+  <div id="appliedInternshipsCount" class="text-5xl text-yellow-400 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in orange for vibrancy -->
+</div>
+
+
+    <!-- Card 5: Queries/Contact -->
+<div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 p-6 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-2">
+  <div class="text-2xl font-semibold text-white mb-2">Queries/Contact</div> <!-- Title in white for contrast -->
+  <div id="queriesCount" class="text-5xl text-yellow-300 font-extrabold mt-2 transform transition duration-300 hover:scale-110">00</div> <!-- Count in yellow for prominence -->
+</div>
+
+  
+  </div>
+</div>
+
+<div id="newRegistrationContent" class="content-section hidden">
+  <!-- New Registration Content -->
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <div class="flex justify-between items-center">
+      <div class="text-2xl font-semibold text-gray-700">New Registration Form</div>
+      <button class="loadbutton" onclick="fetchData('newRegistration')">
+        <i class="fas fa-file-import mr-2"></i> Load Data
+      </button>
+    </div>
+
+    <!-- Search Input for Student ID -->
+    <div class="flex mb-4">
+      <div class="relative w-full max-w-md">
+        <input type="text" id="searchNewRegistrationStudentId" class="p-2 border border-gray-300 rounded-l-lg w-full pr-12" placeholder="Enter Student ID to Search">
+        <button class="absolute right-0 top-0 bottom-0 p-2 bg-blue-500 text-white rounded-r-lg" onclick="searchStudentId()">Search</button>
+      </div>
+      <div id="newRegistrationSearchErrorMessage" class="text-red-500 mt-2 hidden">
+        Student ID not found.
+      </div>
+    </div>
+    
+    <!-- New Registration Table to display the data -->
+    <table id="newRegistrationTable" class="min-w-full bg-white border border-gray-200">
+      <thead class="bg-gray-100 border-b">
+        <tr>
+          <th class="py-2 px-4">DOR</th>
+          <th class="py-2 px-4">Payment Image</th>
+          <th class="py-2 px-4">Full Name</th>
+          <th class="py-2 px-4">Mobile</th>
+          <th class="py-2 px-4">Student ID</th>
+          <th class="py-2 px-4">Email</th>
+          <th class="py-2 px-4">College</th>
+          <th class="py-2 px-4">Branch</th>
+          <th class="py-2 px-4">Academic Year</th>
+          <th class="py-2 px-4">Internship Domain</th>
+          <th class="py-2 px-4">Internship Duration</th>
+          <th class="py-2 px-4">Payment Option</th>
+          <th class="py-2 px-4">Transaction ID</th>
+          <th class="py-2 px-4">Referral-ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data rows for New Registration will go here -->
+      </tbody>
+    </table>
+  </div>
+</div>
+    
+<div id="internshipRegistrationContent" class="content-section hidden">
+  <!-- Internship Domain Registration Content -->
+  <div class="bg-white p-6 rounded-lg shadow-md">
+      <div class="flex justify-between items-center">
+          <div class="text-2xl font-semibold text-gray-700">Internship Domain Registration</div>
+          <button class="loadbutton" onclick="fetchData('internshipRegistration')">
+            <i class="fas fa-file-import mr-2"></i> Load Data
+          </button>                   
+      </div>
+
+      <!-- Search Input for Student ID -->
+      <div class="flex mb-4">
+        <div class="relative w-full max-w-md">
+          <input type="text" id="searchInternshipStudentId" class="p-2 border border-gray-300 rounded-l-lg w-full pr-12" placeholder="Enter Student ID to Search">
+          <button class="absolute right-0 top-0 bottom-0 p-2 bg-blue-500 text-white rounded-r-lg" onclick="searchInternshipStudentId()">Search</button>
+        </div>
+        <div id="internshipSearchErrorMessage" class="text-red-500 mt-2 hidden">
+          Student ID not found.
+        </div>
+      </div>
+      
+      <!-- Internship Registration Table to display the data -->
+      <table id="internshipRegistrationTable" class="min-w-full bg-white border border-gray-200">
+          <thead class="bg-gray-100 border-b">
+              <tr>
+                  <th class="py-2 px-4">Date of Registration</th>
+                  <th class="py-2 px-4">Full Name</th>
+                  <th class="py-2 px-4">Email</th>
+                  <th class="py-2 px-4">Mobile</th>
+                  <th class="py-2 px-4">Student ID</th>
+                  <th class="py-2 px-4">Duration</th>
+                  <th class="py-2 px-4">Domain</th>
+                  <th class="py-2 px-4">Terms</th>
+              </tr>
+          </thead>
+          <tbody>
+              <!-- Data rows for Internship Registration will go here -->
+          </tbody>
+      </table>
+  </div>
+</div>
+
+  
+  <div id="certificateVerificationContent" class="content-section hidden">
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="flex justify-between items-center mb-4">
+          <div class="text-2xl font-semibold text-gray-700">Certificate Verification</div>
+          <button class="loadbutton" onclick="fetchData('certificateVerification')">
+            <i class="fas fa-file-import mr-2"></i> Load Data
+          </button>
+        </div>
+
+          <!-- Search Input for Student ID -->
+  <div class="flex mb-4">
+    <div class="relative w-full max-w-md">
+      <input type="text" id="searchStudentId" class="p-2 border border-gray-300 rounded-l-lg w-full pr-12" placeholder="Enter Student ID to Search">
+      <button class="absolute right-0 top-0 bottom-0 p-2 bg-blue-500 text-white rounded-r-lg" onclick="searchStudentId()">Search</button>
+    </div>
+    <div id="searchErrorMessage" class="text-red-500 mt-2 hidden">
+      Student ID not found.
+    </div>
+    
+  </div>
+        <!-- Certificate Verification Table -->
+        <table id="certificateVerificationTable" class="table-auto w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="px-4 py-2 border" >Date of Verification</th>
+              <th class="px-4 py-2 border">Certificate Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Data rows will go here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div id="userfetchContent" class="content-section hidden">
+      <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="flex justify-between items-center mb-4">
+              <div class="text-2xl font-semibold text-gray-700">User Fetch Projects</div>
+              <button class="loadbutton" onclick="fetchData('userFetchProjects')">
+                  <i class="fas fa-file-import mr-2"></i> Load Data
+              </button>
+          </div>
+  
+          <!-- Search Input for Student ID -->
+          <div class="flex mb-4">
+              <div class="relative w-full max-w-md">
+                  <input type="text" id="searchUserFetchStudentId" class="p-2 border border-gray-300 rounded-l-lg w-full pr-12" placeholder="Enter Student ID to Search">
+                  <button class="absolute right-0 top-0 bottom-0 p-2 bg-blue-500 text-white rounded-r-lg" onclick="searchUserFetchStudentId()">Search</button>
+              </div>
+              <div id="userFetchSearchErrorMessage" class="text-red-500 mt-2 hidden">
+                  Student ID not found.
+              </div>
+          </div>
+  
+          <!-- User Fetch Projects Table -->
+          <table id="userFetchProjectsTable" class="table-auto w-full text-left border-collapse">
+              <thead>
+                  <tr class="bg-gray-200">
+                      <th class="px-4 py-2 border">Date of Fetch Tasks</th>
+                      <th class="px-4 py-2 border">Student Name</th>
+                      <th class="px-4 py-2 border">Student ID</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- Data rows will go here -->
+              </tbody>
+          </table>
+      </div>
+  </div>
+    
+  <div id="useruploadtaskContent" class="content-section hidden">
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-2xl font-semibold text-gray-700">User Uploaded Tasks</div>
+            <button class="loadbutton" onclick="fetchData('userUploadTasks')">
+                <i class="fas fa-file-import mr-2"></i> Load Data
+            </button>
+        </div>
+
+          <!-- Search Input for Student ID -->
+  <div class="flex mb-4">
+    <div class="relative w-full max-w-md">
+      <input type="text" id="searchUserUploadStudentId" class="p-2 border border-gray-300 rounded-l-lg w-full pr-12" placeholder="Enter Student ID to Search">
+      <button class="absolute right-0 top-0 bottom-0 p-2 bg-blue-500 text-white rounded-r-lg" onclick="searchUserUploadStudentId()">Search</button>
+    </div>
+    <div id="searchErrorMessage" class="text-red-500 mt-2 hidden">
+      Student ID not found.
+    </div>
+    
+  </div>
+        <!-- User Upload Tasks Table -->
+        <table id="userUploadTasksTable" class="table-auto w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="px-4 py-2 border">Date of upload tasks</th>
+                    <th class="px-4 py-2 border">Student Id</th>
+                    <th class="px-4 py-2 border">Project Link 01</th>
+                    <th class="px-4 py-2 border">Project Link 02</th>
+                    <th class="px-4 py-2 border">Project Link 03</th>
+                    <th class="px-4 py-2 border">Project Link 04 (Optional)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data rows will go here -->
+            </tbody>
+        </table>
+    </div>
+  </div>
+  
+  <div id="usergeneratedcertificateContent" class="content-section hidden">
+    <!-- User Generated Certificate -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-2xl font-semibold text-gray-700">User Generated Certificates</div>
+            <button class="loadbutton" onclick="fetchData('userGeneratedCertificates')">
+                <i class="fas fa-file-import mr-2"></i> Load Data
+            </button>
+        </div>
+
+        <!-- Search Input for Student ID -->
+        <div class="flex mb-4">
+            <div class="relative w-full max-w-md">
+                <input type="text" id="searchUserGeneratedCertificateStudentId" class="p-2 border border-gray-300 rounded-l-lg w-full pr-12" placeholder="Enter Student ID to Search">
+                <button class="absolute right-0 top-0 bottom-0 p-2 bg-blue-500 text-white rounded-r-lg" onclick="searchUserGeneratedCertificate()">Search</button>
+            </div>
+        </div>
+
+        <div id="usergeneratedcertificateSearchErrorMessage" class="text-red-500 mt-2 hidden">
+            Student ID not found.
+        </div>
+
+        <!-- User Generated Certificates Table -->
+        <table id="userGeneratedCertificatesTable" class="table-auto w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="px-4 py-2 border">Date of Certificate Generation</th>
+                    <th class="px-4 py-2 border">Student Name</th>
+                    <th class="px-4 py-2 border">Email</th>
+                    <th class="px-4 py-2 border">Student ID</th>
+                    <th class="px-4 py-2 border">Document Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data rows will go here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="feedbackdetailsContent" class="content-section hidden">
+  <!-- Feedback Details -->
+  <div class="bg-white p-6 rounded-lg shadow-md">
+      <div class="flex justify-between items-center mb-4">
+          <div class="text-2xl font-semibold text-gray-700">Feedback Response</div>
+          <button class="loadbutton" onclick="fetchData('feedbackResponse')">
+              <i class="fas fa-file-import mr-2"></i> Load Data
+          </button>
+      </div>
+
+      <!-- Search Input for Student ID -->
+      <div class="flex mb-4">
+          <div class="relative w-full max-w-md">
+              <input type="text" id="searchFeedbackStudentId" class="p-2 border border-gray-300 rounded-l-lg w-full pr-12" placeholder="Enter Student ID to Search">
+              <button class="absolute right-0 top-0 bottom-0 p-2 bg-blue-500 text-white rounded-r-lg" onclick="searchFeedbackStudentId()">Search</button>
+          </div>
+      </div>
+      <div id="searchFeedbackErrorMessage" class="text-red-500 mt-2 hidden">
+          Student ID not found.
+      </div>
+
+      <!-- Feedback Response Table -->
+      <table id="feedbackResponseTable" class="table-auto w-full text-left border-collapse">
+          <thead>
+              <tr class="bg-gray-200">
+                  <th class="px-4 py-2 border">Date of Submit</th>
+                  <th class="px-4 py-2 border">Student Name</th>
+                  <th class="px-4 py-2 border">Student ID</th>
+                  <th class="px-4 py-2 border">Rating</th>
+                  <th class="px-4 py-2 border">Feedback</th>
+              </tr>
+          </thead>
+          <tbody>
+              <!-- Data rows will go here -->
+          </tbody>
+      </table>
+  </div>
+</div>
+
+<div id="sentconfirmationContent" class="content-section hidden">
+  <!-- Sent Confirmation Notification -->
+  <div class="bg-white p-6 rounded-lg shadow-md">
+      <div class="flex justify-between items-center mb-4">
+          <div class="text-2xl font-semibold text-gray-700">Sent Confirmation Email Notification</div>
+          <button class="loadbutton" onclick="fetchData('sentConfirmation')">
+              <i class="fas fa-file-import mr-2"></i> Load Data
+          </button>
+      </div>
+
+      <!-- Search Input for Student ID -->
+      <div class="flex mb-4">
+          <div class="relative w-full max-w-md">
+              <input type="text" id="searchSentConfirmationStudentId" class="p-2 border border-gray-300 rounded-l-lg w-full pr-12" placeholder="Enter Student ID to Search">
+              <button class="absolute right-0 top-0 bottom-0 p-2 bg-blue-500 text-white rounded-r-lg" onclick="searchSentConfirmationStudentId()">Search</button>
+          </div>
+      </div>
+      <div id="searchSentConfirmationErrorMessage" class="text-red-500 mt-2 hidden">
+          Student ID not found.
+      </div>
+
+      <!-- Sent Confirmation Table -->
+      <table id="sentConfirmationTable" class="table-auto w-full text-left border-collapse">
+          <thead>
+              <tr class="bg-gray-200">
+                  <th class="px-4 py-2 border">Date of Sent Email</th>
+                  <th class="px-4 py-2 border">Student Name</th>
+                  <th class="px-4 py-2 border">User Email</th>
+                  <th class="px-4 py-2 border">Student ID</th>
+              </tr>
+          </thead>
+          <tbody>
+              <!-- Data rows will go here -->
+          </tbody>
+      </table>
+  </div>
+</div>
+
+    
+     <!-- Send Confirmation Notification Page -->
+     <div id="sendconfirmationContent" class="content-section hidden">
+      <!-- Send Confirmation Notification Section -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Send Registration Confirmation Notification</h2>
+        
+        <!-- Option 1: Embed the external site -->
+        <div class="mt-4">
+          <iframe 
+            src="sendnotification.html" 
+            class="w-full h-96 border border-gray-300 rounded-md shadow-md" 
+            title="Send Notification" 
+            loading="lazy" 
+            sandbox="allow-scripts allow-same-origin allow-forms" 
+            aria-label="Send Notification Embedded Page">
+          </iframe>
+        </div>
+        
+    
+        <!-- Divider -->
+        <div class="my-6 border-t border-gray-200"></div>
+    
+      </div>
+    </div>
+    
+    <div id="generateconfirmationContent" class="content-section hidden">
+      <!-- Sent Confirmation Notification -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="flex justify-between items-center mb-4">
+              <div class="text-2xl font-semibold text-gray-700">Sent Offer Letter Confirmation</div>
+              <button class="loadbutton" onclick="fetchData('generateConfirmation')">
+                <i class="fas fa-file-import mr-2"></i> Load Data
+              </button>
+          </div>
+    
+            <!-- Search Input for Student ID -->
+        <div class="flex mb-4">
+          <div class="relative w-full max-w-md">
+            <input type="text" id="searchGenerateConfirmationStudentId" class="p-2 border border-gray-300 rounded-l-lg w-full pr-12" placeholder="Enter Student ID to Search">
+            <button class="absolute right-0 top-0 bottom-0 p-2 bg-blue-500 text-white rounded-r-lg" onclick="searchGenerateConfirmationStudentId()">Search</button>
+          </div>
+        </div>
+        <div id="searchGenerateConfirmationErrorMessage" class="text-red-500 mt-2 hidden">
+            Student ID not found.
+        </div>
+        
+        <!-- Sent Confirmation Table -->
+        <table id="generateConfirmationTable" class="table-auto w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="px-4 py-2 border">Date of Sent Email</th>
+                    <th class="px-4 py-2 border">Student Name</th>
+                    <th class="px-4 py-2 border">Student Email</th>
+                    <th class="px-4 py-2 border">Student ID</th>
+                    <th class="px-4 py-2 border">Date of Starting</th>
+                    <th class="px-4 py-2 border">Date of Ending</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data rows will go here -->
+            </tbody>
+        </table>
+      </div>
+    </div>
+
+   <!-- Send offer letter Page -->
+   <div id="sendofferletterContent" class="content-section hidden">
+    <!-- Send Confirmation Notification Section -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-2xl font-semibold text-gray-700 mb-4">Send offer letter Notification</h2>
+      
+     <!-- Option 1: Embed the external site -->
+     <div class="mt-4">
+      <iframe 
+        src="offerletternotificationsender.html" 
+        class="w-full h-96 border border-gray-300 rounded-md shadow-md" 
+        title="Send Notification" 
+        loading="lazy" 
+        sandbox="allow-scripts allow-same-origin allow-forms" 
+        aria-label="Send Notification Embedded Page">
+      </iframe>
+    </div>
+      
+  
+      <!-- Divider -->
+      <div class="my-6 border-t border-gray-200"></div>
+  
+    </div>
+  </div>
+
+    <!-- Send reminder Page -->
+    <div id="sendreminderContent" class="content-section hidden">
+      <!-- Send Confirmation Notification Section -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Send Reminder</h2>
+        
+       <!-- Option 1: Embed the external site -->
+       <div class="mt-4">
+        <iframe 
+          src="underdevelopment.html" 
+          class="w-full h-96 border border-gray-300 rounded-md shadow-md" 
+          title="Send Reminder" 
+          loading="lazy" 
+          sandbox="allow-scripts allow-same-origin allow-forms allow-modals" 
+          aria-label="Send Notification Embedded Page">
+        </iframe>
+    </div>
+        
+        <!-- Divider -->
+        <div class="my-6 border-t border-gray-200"></div>
+    
+      </div>
+    </div>
+
+    <div id="adminapplyContent" class="content-section hidden">
+      <!-- Sent Confirmation Notification -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="flex justify-between items-center mb-4">
+              <div class="text-2xl font-semibold text-gray-700">Admin Apply registration</div>
+          </div>
+          <!-- Sent Confirmation Table -->
+          <div class="mt-4">
+            <iframe 
+            src="user-list.html" 
+            class="w-full h-96 border border-gray-300 rounded-md shadow-md" 
+            title="Send Notification" 
+            loading="lazy" 
+            sandbox="allow-scripts allow-same-origin allow-forms allow-modals" 
+            aria-label="Send Notification Embedded Page">
+          </iframe>
+          
+          </div>
+      </div>
+  </div>
+
+  <div id="onlineMeetingContent" class="content-section hidden">
+    <!-- Online Meeting Section -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-2xl font-semibold text-gray-700 mb-4">Schedule Online Meetings</h2>
+  
+      <!-- Improved "Add Meeting" Button -->
+      <a href="https://meet.google.com/landing" target="_blank" 
+         class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+        <i class="fas fa-video mr-2"></i> Add Meeting
+      </a>
+  
+      <!-- Embed Meeting Page -->
+      <div class="mt-6">
+        <iframe 
+          src="meeting.html" 
+          class="w-full h-96 border border-gray-300 rounded-md shadow-md" 
+          title="Send Notification" 
+          loading="lazy" 
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals" 
+          aria-label="Send Notification Embedded Page">
+        </iframe>
+      </div>
+  
+      <!-- Divider -->
+      <div class="my-6 border-t border-gray-200"></div>
+    </div>
+  </div>
+  
+
+  <div id="contactusContent" class="content-section hidden">
+    <!-- Contact Us Queries -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-2xl font-semibold text-gray-700">Contact Us Queries</div>
+            <button class="loadbutton" onclick="fetchData('contactUs')">
+                <i class="fas fa-file-import mr-2"></i> Load Data
+            </button>
+        </div>
+
+       <!-- Search Input for Student ID -->
+       <div class="flex mb-4">
+        <div class="relative w-full max-w-md">
+          <input type="text" id="searchContactUsQuery" class="p-2 border border-gray-300 rounded-l-lg w-full pr-12" placeholder="Enter Student ID to Search">
+          <button class="absolute right-0 top-0 bottom-0 p-2 bg-blue-500 text-white rounded-r-lg" onclick="searchContactUsQuery()">Search</button>
+        </div>
+      </div>
+
+        <!-- Error Message for No Results -->
+        <div id="searchContactUsErrorMessage" class="text-red-500 mt-2 hidden">
+          No queries found.
+        </div>
+
+        <!-- Contact Us Table -->
+        <table id="contactUsTable" class="table-auto w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="px-4 py-2 border">Date of Query</th>
+                    <th class="px-4 py-2 border">Ticket Id</th>
+                    <th class="px-4 py-2 border">Name</th>
+                    <th class="px-4 py-2 border">Subject</th>
+                    <th class="px-4 py-2 border">Email</th>
+                    <th class="px-4 py-2 border">Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data rows will go here dynamically -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="studentworkContent" class="content-section py-6 px-4 bg-gray-50">
+  
+  <!-- Contact Us Queries Section -->
+  <div class="flex justify-between items-center mb-6 p-4 bg-white shadow-md rounded-lg">
+    <div class="text-2xl font-semibold text-gray-700">Student Data Add</div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    
+    <!-- Card 1: Add New Student ID -->
+    <div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 p-6 rounded-lg shadow-xl transition duration-300 hover:shadow-2xl">
+      <div class="text-2xl font-semibold text-white mb-4">Add New Student ID</div>
+      <button onclick="window.open('generatestudentid.html', '_blank')" 
+              class="bg-yellow-400 text-indigo-900 font-bold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300">
+        Visit
+      </button>
+    </div>
+    
+
+    <!-- Card 2: Generate Certificate Number -->
+    <div class="bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 p-6 rounded-lg shadow-xl transition duration-300 hover:shadow-2xl">
+      <div class="text-2xl font-semibold text-white mb-4">Generate Certificate Number</div>
+      <button onclick="window.open('generatecertificatenumber.html', '_blank')" 
+              class="bg-yellow-400 text-teal-900 font-bold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300">
+        Visit
+      </button>
+    </div>
+
+    <!-- Card 3: Add Certificate Details -->
+    <div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 p-6 rounded-lg shadow-xl transition duration-300 hover:shadow-2xl">
+      <div class="text-2xl font-semibold text-white mb-4">Add Certificate Details</div>
+      <button onclick="window.open('certificatedetails.html', '_blank')" 
+              class="bg-yellow-400 text-indigo-900 font-bold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300">
+        Visit
+      </button>
+    </div>
+
+    <!-- Card 4: Assign for Tasks -->
+    <div class="bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 p-6 rounded-lg shadow-xl transition duration-300 hover:shadow-2xl">
+      <div class="text-2xl font-semibold text-white mb-4">Assign for Tasks</div>
+      <button onclick="window.open('assigninternshipdomain.html', '_blank')" 
+              class="bg-yellow-400 text-teal-900 font-bold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300">
+        Visit
+      </button>
+    </div>
+
+    <!-- Card 5: Internship Progress Status -->
+    <div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 p-6 rounded-lg shadow-xl transition duration-300 hover:shadow-2xl">
+      <div class="text-2xl font-semibold text-white mb-4">Internship Progress Status</div>
+      <button onclick="window.open('taskstatus.html', '_blank')" 
+              class="bg-yellow-400 text-indigo-900 font-bold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300">
+        Visit
+      </button>
+    </div>
+
+     <!-- Card 6: Generate Certificate Number -->
+     <div class="bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 p-6 rounded-lg shadow-xl transition duration-300 hover:shadow-2xl">
+      <div class="text-2xl font-semibold text-white mb-4">Generated Student Id</div>
+      <button onclick="window.open('generatedstudentid.html', '_blank')" 
+              class="bg-yellow-400 text-teal-900 font-bold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300">
+        Visit
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+      
+    </div>
+  </div>
+
+   <!-- Overlay for background -->
+   <div class="overlay" id="overlay"></div>
+
+  <div class="popup-card" id="messageCard">
+    <p id="message"></p>
+</div>
+  <!-- Mobile Responsiveness and Sidebar Toggle -->
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const menuToggleTop = document.getElementById('menuToggleTop');
+    const sidebar = document.getElementById('sidebar');
+    const body = document.querySelector('body');
+    const menuIcon = document.getElementById('menuIcon');
+    const topMenuIcon = document.getElementById('topMenuIcon');
+
+    // For toggling the sidebar
+    function toggleSidebar() {
+      sidebar.classList.toggle('-translate-x-full');
+      sidebar.classList.toggle('translate-x-0');
+      body.classList.toggle('overflow-hidden'); // Prevent scrolling when sidebar is open
+
+      // Toggle the menu icon between bars and cross
+      if (sidebar.classList.contains('translate-x-0')) {
+        menuIcon.classList.replace('fa-bars', 'fa-times'); // Change to X when sidebar is open
+        topMenuIcon.classList.replace('fa-bars', 'fa-times'); // Change to X on top bar
+      } else {
+        menuIcon.classList.replace('fa-times', 'fa-bars'); // Change back to bars when sidebar is closed
+        topMenuIcon.classList.replace('fa-times', 'fa-bars'); // Change back to bars on top bar
+      }
+    }
+
+    menuToggle.addEventListener('click', toggleSidebar);
+    menuToggleTop.addEventListener('click', toggleSidebar);
+
+    // Toggle visibility of content sections
+    const dashboardLink = document.getElementById('dashboardLink');
+    const newRegistrationLink = document.getElementById('newRegistrationLink');
+    const internshipRegistrationLink = document.getElementById('internshipRegistrationLink');
+    const certificateVerificationLink = document.getElementById('certificateVerificationLink');
+    const userfetchLink = document.getElementById('userfetchLink');
+    const useruploadtaskLink = document.getElementById('useruploadtaskLink');
+    const usergeneratedcertificateLink = document.getElementById('usergeneratedcertificateLink');
+    const feedbackdetailsLink = document.getElementById('feedbackdetailsLink');
+    const sentconfirmationLink = document.getElementById('sentconfirmationLink');
+    const sendconfirmationLink = document.getElementById('sendconfirmationLink');
+    const generateconfirmationLink = document.getElementById('generateconfirmationLink');
+    const sendofferletterLink = document.getElementById('sendofferletterLink');
+    const sendreminderLink = document.getElementById('sendreminderLink');
+    const adminapplyLink = document.getElementById('adminapplyLink');
+    const onlineMeetingLink = document.getElementById('onlineMeetingLink');
+    const contactusLink = document.getElementById('contactusLink');
+    const studentworkLink = document.getElementById('studentworkLink');
+
+
+    const dashboardContent = document.getElementById('dashboardContent');
+    const newRegistrationContent = document.getElementById('newRegistrationContent');
+    const internshipRegistrationContent = document.getElementById('internshipRegistrationContent');
+    const certificateVerificationContent = document.getElementById('certificateVerificationContent');
+    const userfetchContent = document.getElementById('userfetchContent');
+    const useruploadtaskContent = document.getElementById('useruploadtaskContent');
+    const usergeneratedcertificateContent = document.getElementById('usergeneratedcertificateContent');
+    const feedbackdetailsContent = document.getElementById('feedbackdetailsContent');
+    const sentconfirmationContent = document.getElementById('sentconfirmationContent');
+    const sendconfirmationContent = document.getElementById('sendconfirmationContent');
+    const generateconfirmationContent = document.getElementById('generateconfirmationContent');
+    const sendofferletterContent = document.getElementById('sendofferletterContent'); 
+    const sendreminderContent = document.getElementById('sendreminderContent'); 
+    const adminapplyContent = document.getElementById('adminapplyContent');
+    const onlineMeetingContent = document.getElementById('onlineMeetingContent');
+    const contactusContent = document.getElementById('contactusContent');
+    const studentworkContent = document.getElementById('studentworkContent');
+
+    // Function to hide all content sections
+    function hideAllSections() {
+      dashboardContent.classList.add('hidden');
+      newRegistrationContent.classList.add('hidden');
+      internshipRegistrationContent.classList.add('hidden');
+      certificateVerificationContent.classList.add('hidden');
+      userfetchContent.classList.add('hidden');
+      useruploadtaskContent.classList.add('hidden');
+      usergeneratedcertificateContent.classList.add('hidden');
+      feedbackdetailsContent.classList.add('hidden');
+      sentconfirmationContent.classList.add('hidden');
+      sendconfirmationContent.classList.add('hidden');
+      generateconfirmationContent.classList.add('hidden');
+      sendofferletterContent.classList.add('hidden');
+      sendreminderContent.classList.add('hidden');
+      adminapplyContent.classList.add('hidden');
+      onlineMeetingContent.classList.add('hidden');
+      contactusContent.classList.add('hidden');
+      studentworkContent.classList.add('hidden');
+    }
+
+    // Event listeners for sidebar links to show corresponding content
+    dashboardLink.addEventListener('click', () => {
+      hideAllSections();
+      dashboardContent.classList.remove('hidden');
+    });
+
+    newRegistrationLink.addEventListener('click', () => {
+      hideAllSections();
+      newRegistrationContent.classList.remove('hidden');
+    });
+
+    internshipRegistrationLink.addEventListener('click', () => {
+      hideAllSections();
+      internshipRegistrationContent.classList.remove('hidden');
+    });
+
+    certificateVerificationLink.addEventListener('click', () => {
+      hideAllSections();
+      certificateVerificationContent.classList.remove('hidden');
+    });
+
+    userfetchLink.addEventListener('click', () => {
+      hideAllSections();
+      userfetchContent.classList.remove('hidden');
+    });
+
+    useruploadtaskLink.addEventListener('click', () => {
+      hideAllSections();
+      useruploadtaskContent.classList.remove('hidden');
+    });
+
+    usergeneratedcertificateLink.addEventListener('click', () => {
+      hideAllSections();
+      usergeneratedcertificateContent.classList.remove('hidden');
+    });
+
+    feedbackdetailsLink.addEventListener('click', () => {
+      hideAllSections();
+      feedbackdetailsContent.classList.remove('hidden');
+    });
+
+    sentconfirmationLink.addEventListener('click', () => {
+      hideAllSections();
+      sentconfirmationContent.classList.remove('hidden');
+    });
+
+    sendconfirmationLink.addEventListener('click', () => {
+      hideAllSections();
+      sendconfirmationContent.classList.remove('hidden');
+    });
+
+    generateconfirmationLink.addEventListener('click', () => {
+      hideAllSections();
+      generateconfirmationContent.classList.remove('hidden');
+    });
+
+    sendofferletterLink.addEventListener('click', () => {
+      hideAllSections();
+      sendofferletterContent.classList.remove('hidden');
+    });
+
+    sendreminderLink.addEventListener('click', () => {
+      hideAllSections();
+      sendreminderContent.classList.remove('hidden');
+    });
+    
+    adminapplyLink.addEventListener('click', () => {
+      hideAllSections();
+      adminapplyContent.classList.remove('hidden');
+    });
+
+    onlineMeetingLink.addEventListener('click', () => {
+      hideAllSections();
+      onlineMeetingContent.classList.remove('hidden');
+    });
+
+    contactusLink.addEventListener('click', () => {
+      hideAllSections();
+      contactusContent.classList.remove('hidden');
+    });
+
+    studentworkLink.addEventListener('click', () => {
+      hideAllSections();
+      studentworkContent.classList.remove('hidden');
+    });
+  </script>
+
+<script>
+  // Function to show a specific section
+function showSection(sectionId) {
+    // Hide all sections
+    document.querySelectorAll('.content-section').forEach((section) => {
+        section.classList.add('hidden');
+    });
+
+    // Show the selected section
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.classList.remove('hidden');
+    } else {
+        console.error('Section not found:', sectionId);
+    }
+}
+
+// URLs of CSV files for each section
+const dataUrls = {
+    newRegistration: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRGRsVHf_IQ3MhieEiJL34Shz4i3xLaK-CzxmX53Qtx8Uk7n7_FmyyVQNLofWl9bvVAG3N7XH7WDj1/pub?output=csv',
+    internshipRegistration: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRgVDawdn_MGLRP5XSoRL3Z3HVnJJizuvLv-WMpBrr9qzthiFz-wW3ji7N7mWc3AigF65MmqVMr_MAK/pub?output=csv',
+    certificateVerification: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQkHZIC8DMd2eIW3_UCl3s1RdvRxZ_cjkwaUU6n6NLRKUv_oRMnrBXc4ojWt9Zl4uz29BO4OZ0v4Gxx/pub?output=csv',
+    userFetchProjects: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRa5mWClK5Fdno-4Z00uHP7jtN4VsFUR7sgdySzJ7Zy7-Yg3lwiDG07QrbDKUD90XJnvYqXMyGOZYnR/pub?output=csv',
+    userUploadTasks: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdYKGVOEOjX49cqlRWdiH9blDR7oJYCJ9t-_7fcd33WkKgoMSd0Xt3Y_dbGbJryzMz2qKElgXE3qcx/pub?output=csv',
+    userGeneratedCertificates: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT8OWQIbdH0FRQi_EdswhCnFRrfvQcvaUuQ6OHAhB9wti2LQICBiQcc_KDfRw-oGITtapYZ4HAMIQhs/pub?output=csv',
+    feedbackResponse: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSyZGt2XsA76WCY1FcBpHIUMc3lqyMlFCusWlBaJDS-KyRjRLvTSUcnX8t2vpzi_0JzYfRJGa0v921O/pub?output=csv',
+    sentConfirmation: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTl3xtfkwBa-Zv34widdNTiJefCuO521-07Hf9THFtU1zIy38etCRe2fkzJOUwDqWYVNCDQUGhCqaok/pub?output=csv',
+    generateConfirmation: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSqGHqAHz2bj4yLiEOzXzrE7KTzqvCLaDHSSkJpOVzRf8Gn22HuscrsLyOXNifXIf6MHD385ojbePIY/pub?output=csv',
+    contactUs: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWBd8u7ZRxnmfiwhJtWbPnAPWD4zxv9eCg9bFmXs_XFnGZgtSxLMk2J59DiaLowTLP8g7saukd85ba/pub?output=csv',
+};
+
+// Fetch data for a specific section
+function fetchData(section) {
+    const url = dataUrls[section];
+    if (!url) {
+        console.error('Invalid section:', section);
+        return;
+    }
+
+    fetch(url)
+        .then((response) => response.text())
+        .then((data) => {
+            populateTable(data, `${section}Table`);
+        })
+        .catch((error) => {
+            console.error(`Error fetching data for ${section}:`, error);
+        });
+}
+
+// Populate data into the appropriate table
+function populateTable(csvData, tableId) {
+    const rows = csvData.split('\n');
+    const tableBody = document.querySelector(`#${tableId} tbody`);
+    tableBody.innerHTML = ''; // Clear previous data
+
+    rows.forEach((row, index) => {
+        if (index === 0) return; // Skip header row
+        const cells = row.split(',').map(cell => cell.trim()); // Clean up cells
+
+        const tableRow = document.createElement('tr');
+
+        cells.forEach((cell, cellIndex) => {
+            const tableCell = document.createElement('td');
+            const cellData = cell;
+
+            // If the cell contains a URL, make it clickable and add an icon
+            if (cellData && cellData.startsWith('http')) {
+                const link = document.createElement('a');
+                link.href = cellData;
+                link.target = '_blank'; // Open in new tab
+
+                if (tableId === 'newRegistrationTable' && cellIndex === 1) {
+                    // For payment image, show 'View' icon
+                    const icon = document.createElement('i');
+                    icon.className = 'fas fa-eye mr-2';  // Font Awesome 'View' icon with margin
+                    link.appendChild(icon);
+                    link.appendChild(document.createTextNode(' View'));
+                } else if (tableId === 'userUploadTasksTable' && cellIndex >= 2 && cellIndex <= 5) {
+                    // For project links in upload tasks, show "View Project Link"
+                    const projectLinkNumber = cellIndex - 1;  // 01 -> 1, 02 -> 2, ...
+
+                    // Create the Font Awesome link icon element
+                    const projectLinkIcon = document.createElement('i');
+                    projectLinkIcon.className = 'fas fa-link mr-2';  // Link icon with margin
+                    
+                    // Append the icon and the "View Project Link" text
+                    link.appendChild(projectLinkIcon);
+                    link.appendChild(document.createTextNode(`View Task ${projectLinkNumber}`));
+                }
+
+                tableCell.appendChild(link);
+            } else {
+                tableCell.textContent = cellData || '-';  // If the link is missing, show a hyphen
+            }
+
+            tableCell.className = 'px-4 py-2 border';
+            tableRow.appendChild(tableCell);
+        });
+
+        tableBody.appendChild(tableRow);
+    });
+}
+
+// Function to search Student ID and highlight matching row
+function searchStudentId() {
+  const studentId = document.getElementById('searchNewRegistrationStudentId').value.trim();
+  
+  if (!studentId) {
+    alert("Please enter a student ID to search.");
+    return;
+  }
+
+  const table = document.getElementById('newRegistrationTable');
+  const rows = table.getElementsByTagName('tr');
+  let found = false;
+
+  // Loop through all rows, excluding the header
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    const currentStudentId = cells[4] ? cells[4].textContent.trim() : ''; // Assuming Student ID is in the 5th column (index 4)
+
+    // Check if the student ID matches
+    if (currentStudentId === studentId) {
+      rows[i].classList.add('bg-yellow-100'); // Highlight the row in yellow
+      found = true;
+    } else {
+      rows[i].classList.remove('bg-yellow-100'); // Remove highlighting if no match
+    }
+  }
+
+  // Show error message if not found
+  const errorMessage = document.getElementById('newRegistrationSearchErrorMessage');
+  if (!found) {
+    errorMessage.classList.remove('hidden'); // Show the error message
+  } else {
+    errorMessage.classList.add('hidden'); // Hide the error message
+  }
+}
+
+function searchInternshipStudentId() {
+  const studentId = document.getElementById('searchInternshipStudentId').value.trim();
+  
+  if (!studentId) {
+    alert("Please enter a student ID to search.");
+    return;
+  }
+
+  const table = document.getElementById('internshipRegistrationTable');
+  const rows = table.getElementsByTagName('tr');
+  let found = false;
+
+  // Loop through all rows, excluding the header
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    const currentStudentId = cells[4] ? cells[4].textContent.trim() : ''; // Assuming Student ID is in the 5th column (index 4)
+
+    // Check if the student ID matches
+    if (currentStudentId === studentId) {
+      rows[i].classList.add('bg-yellow-100'); // Highlight the row in yellow
+      found = true;
+    } else {
+      rows[i].classList.remove('bg-yellow-100'); // Remove highlighting if no match
+    }
+  }
+
+  // Show error message if not found
+  const errorMessage = document.getElementById('internshipSearchErrorMessage');
+  if (!found) {
+    errorMessage.classList.remove('hidden'); // Show the error message
+  } else {
+    errorMessage.classList.add('hidden'); // Hide the error message
+  }
+}
+
+function searchCertificateNumber() {
+  const certificateNumber = document.getElementById('searchCertificateNumber').value.trim();
+  
+  if (!certificateNumber) {
+    alert("Please enter a certificate number to search.");
+    return;
+  }
+
+  const table = document.getElementById('certificateVerificationTable');
+  const rows = table.getElementsByTagName('tr');
+  let found = false;
+
+  // Loop through all rows, excluding the header
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    const currentCertificateNumber = cells[1] ? cells[1].textContent.trim() : ''; // Assuming Certificate Number is in the 2nd column (index 1)
+
+    // Check if the certificate number matches
+    if (currentCertificateNumber === certificateNumber) {
+      rows[i].classList.add('bg-yellow-100'); // Highlight the row in yellow
+      found = true;
+    } else {
+      rows[i].classList.remove('bg-yellow-100'); // Remove highlighting if no match
+    }
+  }
+
+  // Show error message if not found
+  const errorMessage = document.getElementById('certificateVerificationSearchErrorMessage');
+  if (!found) {
+    errorMessage.classList.remove('hidden'); // Show the error message
+  } else {
+    errorMessage.classList.add('hidden'); // Hide the error message
+  }
+}
+function searchUserFetchStudentId() {
+  const studentId = document.getElementById('searchUserFetchStudentId').value.trim();
+  
+  if (!studentId) {
+    alert("Please enter a student ID to search.");
+    return;
+  }
+
+  const table = document.getElementById('userFetchProjectsTable');
+  const rows = table.getElementsByTagName('tr');
+  let found = false;
+
+  // Loop through all rows, excluding the header
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    const currentStudentId = cells[2] ? cells[2].textContent.trim() : ''; // Assuming Student ID is in the 3rd column (index 2)
+
+    // Check if the student ID matches
+    if (currentStudentId === studentId) {
+      rows[i].classList.add('bg-yellow-100'); // Highlight the row in yellow
+      found = true;
+    } else {
+      rows[i].classList.remove('bg-yellow-100'); // Remove highlighting if no match
+    }
+  }
+
+  // Show error message if not found
+  const errorMessage = document.getElementById('userFetchSearchErrorMessage');
+  if (!found) {
+    errorMessage.classList.remove('hidden'); // Show the error message
+  } else {
+    errorMessage.classList.add('hidden'); // Hide the error message
+  }
+}
+
+
+function searchUserUploadStudentId() {
+  const studentId = document.getElementById('searchUserUploadStudentId').value.trim();
+  
+  if (!studentId) {
+    alert("Please enter a student ID to search.");
+    return;
+  }
+
+  const table = document.getElementById('userUploadTasksTable');
+  const rows = table.getElementsByTagName('tr');
+  let found = false;
+
+  // Loop through all rows, excluding the header
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    const currentStudentId = cells[1] ? cells[1].textContent.trim() : ''; // Assuming Student ID is in the 2nd column (index 1)
+
+    // Check if the student ID matches
+    if (currentStudentId === studentId) {
+      rows[i].classList.add('bg-yellow-100'); // Highlight the row in yellow
+      found = true;
+    } else {
+      rows[i].classList.remove('bg-yellow-100'); // Remove highlighting if no match
+    }
+  }
+
+  // Show error message if not found
+  const errorMessage = document.getElementById('useruploadtaskSearchErrorMessage');
+  if (!found) {
+    errorMessage.classList.remove('hidden'); // Show the error message
+  } else {
+    errorMessage.classList.add('hidden'); // Hide the error message
+  }
+}
+
+function searchUserGeneratedCertificate() {
+  const studentId = document.getElementById('searchUserGeneratedCertificateStudentId').value.trim();
+
+  if (!studentId) {
+    alert("Please enter a student ID to search.");
+    return;
+  }
+
+  const table = document.getElementById('userGeneratedCertificatesTable');
+  const rows = table.getElementsByTagName('tr');
+  let found = false;
+
+  // Loop through all rows, excluding the header
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    const currentStudentId = cells[3] ? cells[3].textContent.trim() : ''; // Assuming Student ID is in the 4th column (index 3)
+
+    // Check if the student ID matches
+    if (studentId === currentStudentId) {
+      rows[i].classList.add('bg-yellow-100'); // Highlight the row in yellow if a match is found
+      found = true;
+    } else {
+      rows[i].classList.remove('bg-yellow-100'); // Remove highlighting if no match
+    }
+  }
+
+  // Show error message if no match is found
+  const errorMessage = document.getElementById('usergeneratedcertificateSearchErrorMessage');
+  if (!found) {
+    errorMessage.classList.remove('hidden'); // Show the error message
+  } else {
+    errorMessage.classList.add('hidden'); // Hide the error message
+  }
+}
+
+function searchFeedbackStudentId() {
+  const studentId = document.getElementById('searchFeedbackStudentId').value.trim();
+
+  if (!studentId) {
+    alert("Please enter a student ID to search.");
+    return;
+  }
+
+  const table = document.getElementById('feedbackResponseTable');
+  const rows = table.getElementsByTagName('tr');
+  let found = false;
+
+  // Loop through all rows, excluding the header
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    const currentStudentId = cells[2] ? cells[2].textContent.trim() : ''; // Assuming Student ID is in the 3rd column (index 2)
+
+    // Check if the student ID matches
+    if (studentId === currentStudentId) {
+      rows[i].classList.add('bg-yellow-100'); // Highlight the row in yellow if a match is found
+      found = true;
+    } else {
+      rows[i].classList.remove('bg-yellow-100'); // Remove highlighting if no match
+    }
+  }
+
+  // Show error message if no match is found
+  const errorMessage = document.getElementById('searchFeedbackErrorMessage');
+  if (!found) {
+    errorMessage.classList.remove('hidden'); // Show the error message
+  } else {
+    errorMessage.classList.add('hidden'); // Hide the error message
+  }
+}
+
+function searchGenerateConfirmationStudentId() {
+  const studentId = document.getElementById('searchGenerateConfirmationStudentId').value.trim();
+
+  if (!studentId) {
+    alert("Please enter a student ID to search.");
+    return;
+  }
+
+  const table = document.getElementById('generateConfirmationTable');
+  const rows = table.getElementsByTagName('tr');
+  let found = false;
+
+  // Loop through all rows, excluding the header
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    const currentStudentId = cells[3] ? cells[3].textContent.trim() : ''; // Assuming Student ID is in the 4th column (index 3)
+
+    // Check if the student ID matches
+    if (studentId === currentStudentId) {
+      rows[i].classList.add('bg-yellow-100'); // Highlight the row in yellow if a match is found
+      found = true;
+    } else {
+      rows[i].classList.remove('bg-yellow-100'); // Remove highlighting if no match
+    }
+  }
+
+  // Show error message if no match is found
+  const errorMessage = document.getElementById('searchGenerateConfirmationErrorMessage');
+  if (!found) {
+    errorMessage.classList.remove('hidden'); // Show the error message
+  } else {
+    errorMessage.classList.add('hidden'); // Hide the error message
+  }
+}
+
+function searchContactUsQuery() {
+  const query = document.getElementById('searchContactUsQuery').value.trim().toLowerCase();
+
+  if (!query) {
+    alert("Please enter a Ticket ID or Name to search.");
+    return;
+  }
+
+  const table = document.getElementById('contactUsTable');
+  const rows = table.getElementsByTagName('tr');
+  let found = false;
+
+  // Loop through all rows, excluding the header
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    const ticketId = cells[1] ? cells[1].textContent.trim().toLowerCase() : ''; // Assuming Ticket ID is in the 2nd column (index 1)
+    const name = cells[2] ? cells[2].textContent.trim().toLowerCase() : ''; // Assuming Name is in the 3rd column (index 2)
+
+    // Check if the query matches either ticket ID or name
+    if (ticketId.includes(query) || name.includes(query)) {
+      rows[i].classList.add('bg-yellow-100'); // Highlight the row in yellow if a match is found
+      found = true;
+    } else {
+      // Do not remove highlighting on rows that don't match, just keep them as they are
+      // rows[i].classList.remove('bg-yellow-100');
+    }
+  }
+
+  // Show error message if no match is found
+  const errorMessage = document.getElementById('searchContactUsErrorMessage');
+  if (!found) {
+    errorMessage.classList.remove('hidden'); // Show the error message
+  } else {
+    errorMessage.classList.add('hidden'); // Hide the error message
+  }
+}
+</script>
+  
+<script>
+  // Function to display the greeting message with the user's name and change avatar background color
+  function displayGreeting() {
+      const username = localStorage.getItem('username');  // Retrieve username from localStorage
+
+      // Get the current hour
+      const currentHour = new Date().getHours();
+      let timeOfDay, avatarColor;
+
+      // Determine the time of day based on the current hour
+      if (currentHour >= 5 && currentHour < 12) {
+          timeOfDay = 'Good Morning';
+          avatarColor = 'bg-yellow-400';  // Morning color (yellow)
+      } else if (currentHour >= 12 && currentHour < 18) {
+          timeOfDay = 'Good Afternoon';
+          avatarColor = 'bg-orange-400';  // Afternoon color (orange)
+      } else if (currentHour >= 18 && currentHour < 21) {
+          timeOfDay = 'Good Evening';
+          avatarColor = 'bg-blue-400';  // Evening color (blue)
+      } else {
+          timeOfDay = 'Good Night';
+          avatarColor = 'bg-indigo-400';  // Night color (indigo)
+      }
+
+      // Display the greeting with the user's name or a generic greeting
+      const greetingMessage = document.getElementById('greetingMessage');
+      const avatarContainer = document.getElementById('avatarContainer');
+
+      if (username) {
+          greetingMessage.textContent = `${timeOfDay}, ${username}!`;
+      } else {
+          greetingMessage.textContent = 'Hello, Dear!';
+      }
+
+      // Remove any existing background colors from avatar container
+      avatarContainer.classList.remove('bg-yellow-400', 'bg-orange-400', 'bg-blue-400', 'bg-indigo-400');
+      
+      // Add the new background color class
+      avatarContainer.classList.add(avatarColor);
+  }
+
+  // Global function to show popup
+  function showPopup(message) {
+      document.getElementById('message').innerText = message;
+      const overlay = document.getElementById('overlay');
+      const messageCard = document.getElementById('messageCard');
+      overlay.style.display = 'flex';
+      messageCard.style.display = 'block';
+      setTimeout(() => {
+          overlay.style.display = 'none';
+          messageCard.style.display = 'none';
+      }, 1000); // Hide after 5 seconds
+  }
+
+  // Check if the user is logged in and if their role is 'admin'
+  window.onload = function () {
+      const userRole = localStorage.getItem('role'); // Get the role from localStorage
+
+      // If no user is logged in or the role is not 'admin', redirect to the login page
+      if (!userRole || userRole !== 'admin') {
+          showPopup('You are not authorized to access this page. Redirecting to login...');
+          setTimeout(() => {
+              window.location.href = 'index.html'; // Redirect to login page
+          }, 2000);
+      } else {
+          showPopup('You are successfully logged in as an Admin! Please Wait ...');
+      }
+
+      // Display the greeting message
+      displayGreeting();
+  };
+
+  // Logout function
+  function logout() {
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('username');
+      localStorage.removeItem('role');
+      window.location.href = 'index.html'; // Redirect to login page after logout
+  }
+</script>
+
+  <script src="project-folder/script.js"></script>
+</body>
+</html>

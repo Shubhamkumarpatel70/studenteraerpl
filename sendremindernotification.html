@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Send Reminder - Student Era</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Basic CSS for table styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #4CAF50; /* Green background color */
+      color: white; /* White text */
+      padding: 10px; /* Padding for spacing */
+      text-align: left; /* Align text to the left */
+      font-weight: bold; /* Bold text */
+    }
+  
+    .loadbutton {
+      background-color: #2563eb; /* Blue background */
+      color: white; /* White text */
+      padding: 12px 24px; /* Padding for size */
+      border-radius: 8px; /* Rounded corners */
+      font-size: 16px; /* Font size */
+      font-weight: 600; /* Bold font */
+      transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+      border: none; /* Remove border */
+      cursor: pointer; /* Pointer on hover */
+      display: inline-flex; /* Align icon and text */
+      align-items: center; /* Align the items vertically */
+    }
+  
+    .loadbutton:hover {
+      background-color: #1d4ed8; /* Darker blue on hover */
+      transform: scale(1.05); /* Slightly enlarge button on hover */
+    }
+  
+    .loadbutton:focus {
+      outline: none; /* Remove default focus outline */
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Blue outline on focus */
+    }
+  
+    .loadbutton i {
+      font-size: 20px; /* Icon size */
+    }
+  
+    .text-2xl {
+      font-size: 1.5rem;
+    }
+  
+    .font-semibold {
+      font-weight: 600;
+    }
+  
+    table a {
+      text-decoration: none;
+      color: #1d4ed8; /* Tailwind blue color */
+    }
+  
+    table a:hover {
+      text-decoration: underline;
+      color: #2563eb; /* Darker blue when hovered */
+    }
+  
+    /* Style the card popup */
+    .popup-card {
+        display: none; /* Initially hidden */
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        max-width: 300px;
+        text-align: center;
+        z-index: 9999;
+        border-radius: 10px;
+    }
+  
+    .popup-card p {
+        margin: 0;
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
+  
+    /* Background overlay */
+    .overlay {
+        display: none; /* Initially hidden */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9998;
+        backdrop-filter: blur(10px); /* Apply background blur */
+    }
+  
+    /* Style for button */
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+  
+    button:hover {
+        background-color: #45a049;
+    }
+  
+  </style>
+</head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+  <div class="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
+    <h1 class="text-2xl font-semibold text-gray-800 text-center mb-6">Send Reminder</h1>
+    <form id="reminderForm" name="google-sheet-reminder" class="space-y-6">
+      <!-- Select Recipient -->
+      <div>
+        <label for="recipientType" class="block text-gray-700 font-medium mb-1">Recipient</label>
+        <select id="recipientType" name="recipientType"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          <option value="" disabled selected>Select an option</option>
+          <option value="all">All Interns</option>
+          <option value="web-tech">Web Technology Interns</option>
+          <option value="android">Android Interns</option>
+          <option value="java">Java Interns</option>
+          <option value="python">Python Interns</option>
+          <option value="graphics">Graphics Interns</option>
+          <option value="data-analysts">Data Analysts Interns</option>
+        </select>
+      </div>
+      <!-- Optional Email -->
+      <div>
+        <label for="customEmail" class="block text-gray-700 font-medium mb-1">Custom Email (Optional)</label>
+        <textarea id="customEmail" name="customEmail" placeholder="Enter Email Address(es)"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          rows="2"></textarea>
+      </div>
+      <!-- Reminder Subject -->
+      <div>
+        <label for="reminderSubject" class="block text-gray-700 font-medium mb-1">Reminder Subject</label>
+        <input type="text" id="reminderSubject" name="reminderSubject" placeholder="Enter Reminder Subject"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <!-- Reminder Message -->
+      <div>
+        <label for="reminderMessage" class="block text-gray-700 font-medium mb-1">Message</label>
+        <textarea id="reminderMessage" name="reminderMessage" rows="4"
+          placeholder="Enter your reminder message"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+      </div>
+      <!-- Send Button -->
+      <button type="submit" id="sendReminder"
+        class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <span id="buttonText">Send Reminder</span>
+        <span id="sendingText" class="hidden">Sending...</span>
+      </button>
+    </form>
+
+    <!-- Success or Error Message -->
+    <div id="errorMessage" class="text-red-500 text-sm mt-4 hidden" aria-live="polite"></div>
+    <div id="successMessage" class="text-green-500 text-sm mt-4 hidden" aria-live="polite">Reminder sent successfully!</div>
+  </div>
+
+       <!-- Overlay for background -->
+       <div class="overlay" id="overlay"></div>
+
+       <div class="popup-card" id="messageCard">
+         <p id="message"></p>
+     </div>
+
+  <script>
+    const backendURL = 'email-files'; // Update with your backend API endpoint
+    const scriptURL = ''; // Update with your Google Sheets script endpoint
+    const form = document.forms['google-sheet-reminder'];
+
+    // Fetch emails based on group selection
+    document.getElementById('recipientType').addEventListener('change', function () {
+      const group = this.value;
+      if (group && group !== 'all') {
+        fetch(`${backendURL}?group=${group}`)
+          .then(response => response.json())
+          .then(emails => {
+            const customEmailField = document.getElementById('customEmail');
+            customEmailField.value = emails.join(', ');
+          })
+          .catch(error => {
+            console.error('Error fetching emails:', error);
+            document.getElementById('errorMessage').textContent = `Error fetching emails: ${error.message}`;
+            document.getElementById('errorMessage').classList.remove('hidden');
+            setTimeout(() => {
+              document.getElementById('errorMessage').classList.add('hidden');
+            }, 5000);
+          });
+      } else {
+        document.getElementById('customEmail').value = ''; // Clear custom email field for "All Interns"
+      }
+    });
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const sendButton = document.getElementById('sendReminder');
+      const buttonText = document.getElementById('buttonText');
+      const sendingText = document.getElementById('sendingText');
+      
+      sendButton.disabled = true;
+      buttonText.classList.add('hidden');
+      sendingText.classList.remove('hidden');
+
+      const formData = new FormData(form);
+      fetch(scriptURL, { method: 'POST', body: formData })
+        .then(response => {
+          document.getElementById('successMessage').classList.remove('hidden');
+          setTimeout(() => {
+            document.getElementById('successMessage').classList.add('hidden');
+          }, 5000);
+          form.reset();
+
+          sendButton.disabled = false;
+          buttonText.classList.remove('hidden');
+          sendingText.classList.add('hidden');
+        })
+        .catch(error => {
+          console.error('Error!', error.message);
+          document.getElementById('errorMessage').textContent = `An error occurred: ${error.message}`;
+          document.getElementById('errorMessage').classList.remove('hidden');
+          setTimeout(() => {
+            document.getElementById('errorMessage').classList.add('hidden');
+          }, 5000);
+
+          sendButton.disabled = false;
+          buttonText.classList.remove('hidden');
+          sendingText.classList.add('hidden');
+        });
+    });
+  </script>
+
+<script>
+  // Function to display the greeting message with the user's name and change avatar background color
+  function displayGreeting() {
+      const username = localStorage.getItem('username');  // Retrieve username from localStorage
+
+      // Get the current hour
+      const currentHour = new Date().getHours();
+      let timeOfDay, avatarColor;
+
+      // Determine the time of day based on the current hour
+      if (currentHour >= 5 && currentHour < 12) {
+          timeOfDay = 'Good Morning';
+          avatarColor = 'bg-yellow-400';  // Morning color (yellow)
+      } else if (currentHour >= 12 && currentHour < 18) {
+          timeOfDay = 'Good Afternoon';
+          avatarColor = 'bg-orange-400';  // Afternoon color (orange)
+      } else if (currentHour >= 18 && currentHour < 21) {
+          timeOfDay = 'Good Evening';
+          avatarColor = 'bg-blue-400';  // Evening color (blue)
+      } else {
+          timeOfDay = 'Good Night';
+          avatarColor = 'bg-indigo-400';  // Night color (indigo)
+      }
+
+      // Display the greeting with the user's name or a generic greeting
+      const greetingMessage = document.getElementById('greetingMessage');
+      const avatarContainer = document.getElementById('avatarContainer');
+
+      if (username) {
+          greetingMessage.textContent = `${timeOfDay}, ${username}!`;
+      } else {
+          greetingMessage.textContent = 'Hello, Dear!';
+      }
+
+      // Remove any existing background colors from avatar container
+      avatarContainer.classList.remove('bg-yellow-400', 'bg-orange-400', 'bg-blue-400', 'bg-indigo-400');
+      
+      // Add the new background color class
+      avatarContainer.classList.add(avatarColor);
+  }
+
+  // Global function to show popup
+  function showPopup(message) {
+      document.getElementById('message').innerText = message;
+      const overlay = document.getElementById('overlay');
+      const messageCard = document.getElementById('messageCard');
+      overlay.style.display = 'flex';
+      messageCard.style.display = 'block';
+      setTimeout(() => {
+          overlay.style.display = 'none';
+          messageCard.style.display = 'none';
+      }, 1000); // Hide after 5 seconds
+  }
+
+  // Check if the user is logged in
+  window.onload = function () {
+      // Display the greeting message
+      displayGreeting();
+  };
+
+  // Logout function
+  function logout() {
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('username');
+      localStorage.removeItem('role');
+      window.location.href = 'index.html'; // Redirect to login page after logout
+  }
+</script>
+</body>
+</html>
