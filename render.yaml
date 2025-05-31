@@ -2,9 +2,9 @@ services:
   - type: web
     name: studentera-app
     env: node
-    nodeVersion: 18.x
+    nodeVersion: 16.20.0
     buildCommand: npm install
-    startCommand: node server.js
+    startCommand: node simple-server.js
     envVars:
       - key: PORT
         value: 10000
