@@ -2,6 +2,7 @@ services:
   - type: web
     name: studentera-app
     env: node
+    nodeVersion: 18.x
     buildCommand: npm install
     startCommand: node server.js
     envVars:

@@ -10,13 +10,21 @@ const uuid = require('uuid'); // For generating unique IDs
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Ensure data directory exists
+const dataDir = path.join(__dirname, 'data');
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+    console.log('Created data directory');
+}
+
 // Path to the Excel files
-const EXCEL_FILE = path.join(__dirname, 'data', 'users.xlsx');
-const MEETING_FILE = path.join(__dirname, 'data', 'meetings.xlsx');
+const EXCEL_FILE = path.join(dataDir, 'users.xlsx');
+const MEETING_FILE = path.join(dataDir, 'meetings.xlsx');
 
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.static(path.join(__dirname)));
 
 // Ensure the Excel files exist with headers
 function ensureFileExists(filePath, headers) {
@@ -47,6 +55,16 @@ function writeExcelFile(filePath, data) {
 }
 
 // Routes
+
+// Root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// API status route
+app.get('/api/status', (req, res) => {
+    res.status(200).json({ status: 'Server is running' });
+});
 
 // Register user
 app.post('/register', (req, res) => {
